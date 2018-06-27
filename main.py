@@ -45,54 +45,26 @@ def dict_curves_from_file(filepath):
     return dict_curves
 
 
-def butter_lowpass(cutoff, fs, order=5):
+def butter_filter(data, cutoff, fs, btype, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    return b, a
-
-def butter_highpass(cutoff, fs, order=5):
-    nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='high', analog=False)
-    return b, a
-
-def butter_lowpass_filter(data, cutoff, fs, order=5):
-    #b, a = butter_lowpass(cutoff, fs, order=order)
-    b, a = butter_lowpass(cutoff, fs, order=order)
+    b, a = butter(order, normal_cutoff, btype=btype, analog=False)
     y = lfilter(b, a, data)
     return y
 
-def butter_highpass_filter(data, cutoff, fs, order=5):
-    #b, a = butter_lowpass(cutoff, fs, order=order)
-    b, a = butter_highpass(cutoff, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
-
-def butter_pass_filter(data, band, fs, order=5):
-    nyq = 0.5 * fs
-    #normal_low = band[0] / nyq
-    #normal_high = band[1] / nyq
-    b, a = butter(order, (band[0],band[1]), btype='bandpass', analog=True)
-    #b, a = butter_pass(cutoff, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
 
 #http://qaru.site/questions/130793/creating-lowpass-filter-in-scipy-understanding-methods-and-units
 dict_curves = dict_curves_from_file(filepath)
 fs = SAMPLE_RATE
 T = TIME_GAUGING
 n = int(T * fs) # total number of samples
-#cutoff_low = BANDWIDTHS[19][1]
-#cutoff_high = BANDWIDTHS[19][0]
 t = np.linspace(0, T, n, endpoint=False)
 iter = 0
 for bandwidth in BANDWIDTHS:
     for key_curv in dict_curves.keys():
         data  = np.array(dict_curves[key_curv])
-        cutted_low_data = butter_lowpass_filter(data, bandwidth[1], fs, ORDER)
-        cutted_high_data = butter_highpass_filter(cutted_low_data, bandwidth[0], fs, ORDER)
+        cutted_low_data = butter_filter(data, bandwidth[1], fs, 'low', ORDER)
+        cutted_high_data = butter_filter(cutted_low_data, bandwidth[0], fs, 'high', ORDER)
         filtred_data = cutted_high_data
         max_value = max(filtred_data)
         #print max_value
