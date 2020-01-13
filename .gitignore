@@ -108,3 +108,5 @@ ENV3/
 
 # mypy
 .mypy_cache/
+/output/
+*.zip

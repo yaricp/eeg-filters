@@ -1,6 +1,6 @@
 SAMPLE_RATE = 10000
 TIME_GAUGING = 0.3
-ITER = 0.008
+ITER = 0.004
 ORDER = 1
 BANDWIDTHS = [
                [1, 100],
