@@ -1,7 +1,8 @@
-filepath = 'input/data.txt'
+SOURCE_FILEPATH = 'input/data.txt'
+TARGET_FILEPATH = 'output/filter'
 SAMPLE_RATE = 10000
-TIME_GAUGING = 0.3
-ITER = 0.004
+TIME_MEASUGING = 0.3
+ITER_VALUE = 0.004
 ORDER = 1
 START_SEARCH = 300
 END_SEARCH = 1500
