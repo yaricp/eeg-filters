@@ -28,9 +28,9 @@ class MyWindow(QMainWindow):
         self.end_search = END_SEARCH
         self.dict_bandwidth_data = {}
         self.__start_calc()
-        self.graph = pg.GraphicsLayoutWidget(parent=self)
-        self.make_graphics('[1, 100]')
-        self.grid.addWidget(self.graph, 0, 0)
+        #self.graph = pg.GraphicsLayoutWidget(parent=self)
+        #self.make_graphics('[1, 100]')
+        #self.grid.addWidget(self.graph, 0, 0)
         self.statusBar()
 
         openFile = QAction(QIcon('open.png'), 'Open', self)
