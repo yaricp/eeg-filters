@@ -15,8 +15,8 @@ filepath = 'input/data.txt'
 
 def prepare_data_from_file(filepath):
     '''function get rows from input file and append data to dictionary of data'''
-    dict_curves = {}
-    dict_times = {}
+    #dict_curves = {}
+    list_times = []
     position = ''
     tmp_count = 0
     target_list = []
@@ -39,7 +39,7 @@ def prepare_data_from_file(filepath):
                tmp_count += 1
                continue
             if position == 'times':
-                dict_times = [row.split('   ')[i].replace(' ','') for i in range(1,len(row.split('   '))-1)]
+                list_times = [row.split('   ')[i].replace(' ','') for i in range(1,len(row.split('   '))-1)]
                 tmp_count = 0
             else:
                 target_list = append_data_to_list(target_list,row)
@@ -47,7 +47,7 @@ def prepare_data_from_file(filepath):
     list_out = np.array(target_list).transpose()
     #print(list_out)
                 
-    return simple_rate, dict_times, list_out
+    return simple_rate, list_times, list_out
 
 
 def append_data_to_list(target_list,row):
@@ -61,27 +61,44 @@ def append_data_to_list(target_list,row):
     target_list.append(rowlist)
     return target_list
 
-#def append_data_to_dict(target_dict,row):
-#    ''' Append data from row of file to dict of data'''
-#    row = row.replace('\n','')
-#    row_splitted = row.split(':')[1].split('   ')
-#    for i in range(1,len(row_splitted)):
-#        value = row_splitted[i].replace(' ','')
-#        flag_minus = False
-#        if value.find('-') !=-1:
-#            flag_minus = True
-#        value = value.replace('-','')
-#        float_value = float(value)
-#        if flag_minus:
-#            float_value = -float_value
-#        if i-1 in target_dict.keys():
-#            list_data = target_dict[i-1]
-#            list_data.append(float_value)
-#        else:
-#            list_data = [float_value]
-#        target_dict.update({i-1:list_data})
-#    return target_dict
-
+def make_filter(row, bandwidth, fs):
+    data  = np.array(row)
+    cutted_low_data = butter_filter(data, bandwidth[1], fs, 'low', ORDER)
+    cutted_high_data = butter_filter(cutted_low_data, bandwidth[0], fs, 'high', ORDER)
+    filtred_data = cutted_high_data
+    return filtred_data
+    
+def search_max_min(list_ticks, data):
+    search_slice = data[START_SEARCH:END_SEARCH]
+    local_max = np.amax(search_slice)
+    local_min = np.amin(search_slice)
+    time_max = np.where(search_slice == np.amax(search_slice))[0][0]
+    time_min = np.where(search_slice == np.amin(search_slice))[0][0]
+    return {'max':(list_ticks[START_SEARCH+time_max], local_max), 
+            'min':(list_ticks[START_SEARCH+time_min], local_min)}
+    
+def make_graphics(list_ticks, main_dict, bandwidth):
+    iter = 0
+    last_max_value = 0
+    dict_data = main_dict['%s' % bandwidth]
+    for time_stamp, row in dict_data.items():
+        ext_dict = row['ext']
+        iter -= ITER + last_max_value
+        y = row['data'] + iter
+        plt.plot(list_ticks, y, 'g-', 
+                linewidth=2,
+                label='filtered data '+str(time_stamp))
+        plt.plot([ext_dict['max'][0], ], 
+                [ext_dict['max'][1] + iter, ],
+                'ro')
+        plt.plot([ext_dict['min'][0], ], 
+                [ext_dict['min'][1] + iter, ], 
+                'bo')
+        last_max_value = max(row['data'])
+    plt.axis([0, list_ticks[-1],iter-2*ITER, 2*ITER])
+    plt.xlabel('bandwidth: %s'% bandwidth)
+    plt.grid()
+    plt.show()
 
 def butter_filter(data, cutoff, fs, btype, order=5):
     nyq = 0.5 * fs
@@ -101,7 +118,11 @@ def create_head_output_file(bandwidth):
 
 
 def write_out_data(bandwidth, out_dict):
-    '''Write data to putput'''
+    '''
+    Write data to putput
+    '''
+    
+    #print(out_dict)
     with open('output/filter%s.dat' % bandwidth,'a') as outfile:
         for i in range(1, len(out_dict)+1):
             outfile.write('     '+str(i))
@@ -112,55 +133,28 @@ def write_out_data(bandwidth, out_dict):
                 outfile.write('%s    '% out_dict[col][row])
             outfile.write('\n')
 
+def start_calc():
+    #http://qaru.site/questions/130793/creating-lowpass-filter-in-scipy-understanding-methods-and-units
+    fs, list_times, list_data = prepare_data_from_file(filepath)
+    T = TIME_GAUGING
+    n = int(T * fs)     # total number of samples
+    t = np.linspace(0, T, n, endpoint=False)    #tick of measuring
+    dict_bandwidth_data = {}
+    for bandwidth in BANDWIDTHS:
+        create_head_output_file(bandwidth)
+        dict_curves_filtred = {}
+        for key_curv, row in zip (list_times, list_data):
+            filtred_data = make_filter(row, bandwidth, fs)
+            ext_dict = search_max_min(t, filtred_data)
+            dict_curves_filtred.update({key_curv:{'data':filtred_data, 
+                                                    'ext': ext_dict, 
+                                                }
+                                        })
+        dict_bandwidth_data.update({'%s' % bandwidth:dict_curves_filtred})
+    for bandwidth in BANDWIDTHS:
+        make_graphics(t, dict_bandwidth_data, bandwidth )
+        #write_out_data(bandwidth, dict_curves_filtred)
+    print(dict_bandwidth_data)
 
-#http://qaru.site/questions/130793/creating-lowpass-filter-in-scipy-understanding-methods-and-units
-fs, dict_times, list_data = prepare_data_from_file(filepath)
-T = TIME_GAUGING
-n = int(T * fs) # total number of samples
-t = np.linspace(0, T, n, endpoint=False)
-iter = 0
-data = np.array(list_data[0])
-print(len(list_data[0]))
-print(list_data[0])
-plt.plot(t, list_data[0], 'b-', linewidth=2, label='clear data ')
-#plt.switch_backend('WXAgg')
-plt.grid()
-plt.subplots_adjust(hspace=0.55)
-plt.show()
-data  = list_data[0]
-cutted_low_data = butter_filter(data, BANDWIDTHS[-1][1], fs, 'low', ORDER)
-cutted_high_data = butter_filter(cutted_low_data, BANDWIDTHS[-1][0], fs, 'high', ORDER)
-filtred_data = cutted_high_data
-y = filtred_data
-plt.plot(t, y, 'g-', linewidth=2, label='filtered data ')
-plt.grid()
-plt.subplots_adjust(hspace=0.55)
-plt.show()
-#print(dict_curves.keys())
-#sys.exit(0)
-for bandwidth in BANDWIDTHS:
-    create_head_output_file(bandwidth)
-    dict_curves_filtred = {}
-    counter = 0
-    last_max_value = 0
-    for row in list_data:
-        data  = np.array(row)
-        cutted_low_data = butter_filter(data, bandwidth[1], fs, 'low', ORDER)
-        cutted_high_data = butter_filter(cutted_low_data, bandwidth[0], fs, 'high', ORDER)
-        filtred_data = cutted_high_data
-        
-        #dict_curves_filtred.update({key_curv:filtred_data})
-        iter += ITER + last_max_value
-        y = filtred_data + iter
-        plt.plot(t, y, 'g-', linewidth=2, label='filtered data '+str(counter))
-        counter += 1
-        last_max_value = max(filtred_data)
-    write_out_data(bandwidth, dict_curves_filtred)
-
-    plt.xlabel('bandwidth: %s'% bandwidth)
-    plt.grid()
-    #plt.legend()
-    #plt.subplots_adjust(hspace=0.55)
-    plt.show()
-
-
+if __name__ == "__main__":
+    start_calc()

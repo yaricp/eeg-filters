@@ -110,3 +110,4 @@ ENV3/
 .mypy_cache/
 /output/
 *.zip
+*.e4p
