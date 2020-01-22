@@ -108,6 +108,9 @@ ENV3/
 
 # mypy
 .mypy_cache/
-/output/
+*output*
+*input*
+
 *.zip
 *.e4p
+.eric6project*
