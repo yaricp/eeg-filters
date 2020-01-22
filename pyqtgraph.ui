@@ -1,0 +1,61 @@
+<ui version="4.0">
+<class>MainWindow</class>
+<widget class="QMainWindow" name="MainWindow">
+<property name="geometry">
+<rect>
+<x>0</x>
+<y>0</y>
+<width>481</width>
+<height>329</height>
+</rect>
+</property>
+<property name="windowTitle">
+<string>MainWindow</string>
+</property>
+<widget class="QWidget" name="centralwidget">
+<widget class="QWidget" name="gridLayoutWidget">
+<property name="geometry">
+<rect>
+<x>-1</x>
+<y>-1</y>
+<width>481</width>
+<height>281</height>
+</rect>
+</property>
+<layout class="QGridLayout" name="grid">
+<item row="0" column="0">
+<widget class="QLabel" name="label">
+<property name="text">
+<string/>
+</property>
+</widget>
+</item>
+</layout>
+</widget>
+</widget>
+<widget class="QMenuBar" name="menubar">
+<property name="geometry">
+<rect>
+<x>0</x>
+<y>0</y>
+<width>481</width>
+<height>20</height>
+</rect>
+</property>
+<widget class="QMenu" name="menuFile">
+<property name="title">
+<string>file</string>
+</property>
+</widget>
+<addaction name="menuFile"/>
+</widget>
+<widget class="QStatusBar" name="statusbar"/>
+<action name="actionExit">
+<property name="text">
+<string>exit</string>
+</property>
+</action>
+</widget>
+<resources/>
+<connections/>
+</ui>

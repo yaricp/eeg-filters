@@ -1,3 +1,4 @@
+filepath = 'input/data.txt'
 SAMPLE_RATE = 10000
 TIME_GAUGING = 0.3
 ITER = 0.004
