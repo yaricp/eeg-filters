@@ -14,7 +14,7 @@
    <string>EEG-Filters</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QListWidget" name="bandwidths">
+   <widget class="QListWidget" name="listWidget">
     <property name="enabled">
      <bool>true</bool>
     </property>
