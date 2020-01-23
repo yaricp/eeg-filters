@@ -54,6 +54,7 @@ class MyWindow(QMainWindow):
             plt.plot(y,symbolPen='w')
             last_max_value = max(row['data'])
             
+        
     def __start_calc(self):
         fs, list_times, list_data = prepare_data(self.source_filepath)
         tick_times = get_tick_times(fs, self.time_measuring)
@@ -75,9 +76,13 @@ class MyWindow(QMainWindow):
 
     def showDialog(self):
 
-        self.source_filepath = QFileDialog.getOpenFileName(self, 'Open file', '/home')[0]
-
-        print(self.source_filepath)
+        self.source_filepath = QFileDialog.getOpenFileName(
+                                                    self, 
+                                                    'Open file', 
+                                                    './')[0]
+        self.dict_bandwidth_data = {}
+        self.__start_calc()
+        print(self.dict_bandwidth_data)
 
 
 if __name__=='__main__':

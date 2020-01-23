@@ -6,7 +6,7 @@ class App(QWidget):
 
     def __init__(self):
         super().__init__()
-        self.title = 'PyQt5 file dialogs'
+        self.title = 'open source data file'
         self.left = 10
         self.top = 10
         self.width = 640
@@ -16,7 +16,7 @@ class App(QWidget):
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
-        
+        self.source_file = None
         self.openFileNameDialog()
         self.openFileNamesDialog()
         self.saveFileDialog()
