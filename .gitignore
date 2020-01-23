@@ -102,12 +102,13 @@ ENV3/
 
 # Rope project settings
 .ropeproject
-
+.eric6project
 # mkdocs documentation
 /site
 
 # mypy
 .mypy_cache/
-/output/
+*output*
+*input*
 *.zip
 *.e4p
