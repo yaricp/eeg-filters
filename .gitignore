@@ -90,7 +90,6 @@ ENV/
 env.bak/
 venv.bak/
 
-
 .env3
 .venv3
 env3/
