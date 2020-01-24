@@ -41,11 +41,19 @@ def search_max_min(list_ticks, data, where_find):
     First element of tuple in row of dictionary is a time, 
     second is value of extremum.
     '''
-    search_slice = data[where_find[0]:where_find[1]]
+    begin_index = get_index_time(list_ticks, where_find[0])
+    end_index = get_index_time(list_ticks, where_find[1])
+    search_slice = data[begin_index:end_index]
     local_max = np.amax(search_slice)
     local_min = np.amin(search_slice)
-    time_max = np.where(search_slice == np.amax(search_slice))[0][0]
-    time_min = np.where(search_slice == np.amin(search_slice))[0][0]
-    return {'max':(list_ticks[where_find[0]+time_max], local_max), 
-            'min':(list_ticks[where_find[0]+time_min], local_min)}
+    max_index = np.where(search_slice == np.amax(search_slice))[0][0]
+    min_index = np.where(search_slice == np.amin(search_slice))[0][0]
+    return {'max':(list_ticks[begin_index + max_index], local_max), 
+            'min':(list_ticks[begin_index + min_index], local_min)}
             
+def get_index_time(list_ticks, time):
+    ticks_array = np.array(list_ticks)
+    index = np.where(ticks_array >= time)[0][0]
+    return index
+    
+    
