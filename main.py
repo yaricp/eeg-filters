@@ -18,7 +18,7 @@ from eeg_filters.export import create_head_output_file
 from settings import *
 
 
-class MyWindow(QMainWindow, ui.Ui_MainWindow):
+class MainWindow(QMainWindow, ui.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -42,7 +42,7 @@ class MyWindow(QMainWindow, ui.Ui_MainWindow):
         self.__start_calc()
         #self.graph = pg.GraphicsLayoutWidget(self.graphicsView)
         self.graph = pg.PlotWidget(self.graphicsView)
-        self.graph.setGeometry(QtCore.QRect(20, 40, 480, 380))
+        self.graph.setGeometry(QtCore.QRect(19, 49, 860, 470))
         self.graph.setBackground('w')
         #print(dir(self.graph))
         #parent=self.graphicsView
@@ -52,8 +52,12 @@ class MyWindow(QMainWindow, ui.Ui_MainWindow):
 
         openFile = QAction(QIcon('open.png'), 'Open', self)
         openFile.setShortcut('Ctrl+O')
-        openFile.setStatusTip('Open new File')
-        openFile.triggered.connect(self.showDialog)
+        openFile.setStatusTip('Open Source File')
+        openFile.triggered.connect(self.showDialogOpen)
+        saveFile = QAction(QIcon('save.png'), 'Save', self)
+        saveFile.setShortcut('Ctrl+S')
+        saveFile.setStatusTip('Save Filtered Data')
+        saveFile.triggered.connect(self.showDialogSave)
         
         self.pushButton_2.clicked.connect(self.start_search_ext)
         
@@ -104,20 +108,28 @@ class MyWindow(QMainWindow, ui.Ui_MainWindow):
                                             })
             self.dict_bandwidth_data.update({'%s' % bandwidth:dict_curves_filtred})
 
-    def showDialog(self):
+    def showDialogOpen(self):
 
         self.source_filepath = QFileDialog.getOpenFileName(
                                                     self, 
-                                                    'Open ource sfile', 
+                                                    'Open source file', 
                                                     './')[0]
         self.dict_bandwidth_data = {}
         self.__start_calc()
         print(self.dict_bandwidth_data)
+        
+    def showDialogSave(self):
+
+        filepath = QFileDialog.getSaveFileName(
+                                    self, 
+                                    'Save filtered data', 
+                                    './')[0]
+        print(filepath)
 
 
 if __name__=='__main__':
     from sys import argv,exit
     app = QApplication(argv)
-    win = MyWindow()
+    win = MainWindow()
     win.show()
     exit(app.exec_())
