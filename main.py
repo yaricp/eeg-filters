@@ -142,14 +142,14 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         bandwidth = self.bandwidths[index]
         iter_max = 0
         iter_min = 0
-        if not '%s' % bandwidth in self.dict_extremums_data:
-            self.calc_add_extremums(bandwidth)
-        dict_data = self.dict_extremums_data['%s' % bandwidth]
         self.range_search_extremums.setRegion([
                 float(self.lineEdit_1.text()), 
                 float(self.lineEdit_2.text())
                 ])
         self.graph.addItem(self.range_search_extremums)
+        if not '%s' % bandwidth in self.dict_extremums_data:
+            self.calc_add_extremums(bandwidth)
+        dict_data = self.dict_extremums_data['%s' % bandwidth]
         count = 0
         for time_stamp, row in dict_data.items():
             count += 1
