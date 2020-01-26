@@ -30,6 +30,14 @@ class Ui_MainWindow(object):
         self.lineEdit_3 = QtWidgets.QLineEdit(self.centralwidget)
         self.lineEdit_3.setGeometry(QtCore.QRect(890, 450, 81, 31))
         self.lineEdit_3.setObjectName("lineEdit_3")
+        
+        self.lineEdit_1 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_1.setGeometry(QtCore.QRect(300, 15, 60, 20))
+        self.lineEdit_1.setObjectName("lineEdit_1")
+        self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
+        self.lineEdit_2.setGeometry(QtCore.QRect(450, 15, 60, 20))
+        self.lineEdit_2.setObjectName("lineEdit_2")
+        
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(890, 490, 81, 31))
         self.pushButton_3.setObjectName("pushButton_3")
@@ -43,10 +51,20 @@ class Ui_MainWindow(object):
         self.widget.setGeometry(QtCore.QRect(20, 50, 861, 471))
         self.widget.setObjectName("widget")
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
-        self.progressBar.setGeometry(QtCore.QRect(220, 10, 361, 31))
+        self.progressBar.setGeometry(QtCore.QRect(20, 517, 830, 31))
         self.progressBar.setProperty("value", 0)
         self.progressBar.setProperty("visible", 0)
         self.progressBar.setObjectName("progressBar")
+        
+        self.slider1 = QtWidgets.QSlider(QtCore.Qt.Vertical, self.centralwidget)
+        self.slider1.setGeometry(QtCore.QRect(860, 50, 20, 391))
+        self.slider1.setMinimum(0)
+        self.slider1.setMaximum(20)
+        self.slider1.setValue(5)
+        self.slider1.setTickPosition(QtWidgets.QSlider.TicksBelow)
+        self.slider1.setTickInterval(1)
+        
+        
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 994, 22))
@@ -62,6 +80,8 @@ class Ui_MainWindow(object):
         self.actionsave.setObjectName("actionsave")
         self.actionsave_as = QtWidgets.QAction(MainWindow)
         self.actionsave_as.setObjectName("actionsave_as")
+        
+        
 
         self.retranslateUi(MainWindow)
         self.listWidget.setCurrentRow(-1)
