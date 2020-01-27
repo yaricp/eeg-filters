@@ -16,7 +16,7 @@ import ui
 
 from eeg_filters.upload import prepare_data
 from eeg_filters.filters import make_filter, search_max_min, get_tick_times
-from eeg_filters.export import create_head_output_file
+from eeg_filters.export import create_head_output_file, write_out_data
 from settings import *
 
 
@@ -34,7 +34,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.max_iter_value = MAX_ITER_VALUE
         
         self.source_filepath = ''
-        self.target_filepath = ''
+        self.target_dirpath = ''
         self.dict_bandwidth_data = {}
         self.dict_extremums_data = {}
         self.dict_max_for_iter = {}
@@ -70,25 +70,33 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         openFileButton = QAction(QIcon('open.png'), 'Open', self)
         openFileButton.setShortcut('Ctrl+O')
         openFileButton.setStatusTip('Open Source File')
-        openFileButton.triggered.connect(self.showDialogOpen)
+        openFileButton.triggered.connect(self.show_dialog_open)
         
         saveFileButton = QAction(QIcon('save.png'), 'Save', self)
         saveFileButton.setShortcut('Ctrl+S')
         saveFileButton.setStatusTip('Save Filtered Data')
-        saveFileButton.triggered.connect(self.showDialogSave)
+        saveFileButton.triggered.connect(self.save_button_pressed)
+        
+        self.lineEdit_1.returnPressed.connect(
+                self.change_text_line_edits
+                )
+        self.lineEdit_2.returnPressed.connect(
+                self.change_text_line_edits
+                )
         
         self.fileDialogOpen = QFileDialog()
-        self.fileDialogOpen.setFileMode(1)
+        self.fileDialogOpen.setFileMode(0)
         
         self.fileDialogSave = QFileDialog()
+        self.fileDialogSave.setFileMode(4)
         
-        self.pushButton.clicked.connect(self.showDialogOpen)
+        self.pushButton.clicked.connect(self.show_dialog_open)
         self.pushButton_2.clicked.connect(self.show_graphic_filtered)
         self.pushButton_3.clicked.connect(self.add_new_bandwidth)
-        self.pushButton_4.clicked.connect(self.showDialogSave)
+        self.pushButton_4.clicked.connect(self.save_button_pressed)
         self.pushButton_5.clicked.connect(self.show_graphic_source)
         
-        self.slider1.valueChanged.connect(self.changeValueSlider)
+        self.slider1.valueChanged.connect(self.change_value_slider)
         
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
@@ -170,6 +178,31 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                     symbolSize=5, symbolBrush=('b'))
             self.dict_showed_extremums.update({time_stamp:[showed_max, showed_min]})
         self.progressBar.setProperty("visible", 0)
+        return True
+        
+    def change_text_line_edits(self):
+        if self.total_count == 0 or not self.dict_showed_extremums:
+            return False
+        self.range_search_extremums.setRegion([
+                float(self.lineEdit_1.text()), 
+                float(self.lineEdit_2.text())
+                ])
+        index = self.listWidget.currentRow()
+        bandwidth = self.bandwidths[index]
+        self.calc_add_extremums(bandwidth)
+        dict_data = self.dict_extremums_data['%s' % bandwidth]
+        for time_stamp, row in dict_data.items():
+            iter_max = self.dict_max_for_iter[time_stamp]
+            iter_min = self.dict_max_for_iter[time_stamp]
+            max_x = row['max'][0]
+            max_y = row['max'][1] + iter_max
+            min_x = row['min'][0]
+            min_y = row['min'][1] + iter_min
+            showed_max = self.dict_showed_extremums[time_stamp][0]
+            showed_max.setData([max_x, ], [max_y, ])
+            showed_min = self.dict_showed_extremums[time_stamp][1]
+            showed_min.setData([min_x, ], [min_y, ])
+            self.dict_showed_extremums.update({time_stamp:[showed_max, showed_min]})
         return True
         
     def change_range_search_extremums(self):
@@ -259,14 +292,14 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.bandwidths.append(value)
         self.lineEdit_3.clear()
         
-    def changeValueSlider(self):
+    def change_value_slider(self):
         self.iter_value = self.slider1.value()*self.max_iter_value/20
         print(self.iter_value)
         QApplication.processEvents()
         self.show_graphic_filtered()
         return True 
         
-    def showDialogOpen(self):
+    def show_dialog_open(self):
 
         self.source_filepath = self.fileDialogOpen.getOpenFileName(
                                                     self, 
@@ -290,13 +323,27 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.show_graphic_source()
         #print(self.dict_bandwidth_data)
         
-    def showDialogSave(self):
-
-        filepath = self.fileDialogSave.getSaveFileName(
+    def save_button_pressed(self):
+        if not self.target_dirpath:
+            self.target_dirpath = self.fileDialogSave.getExistingDirectory(
                                     self, 
                                     'Save filtered data', 
-                                    './')[0]
-        print(filepath)
+                                    './')
+        print(self.target_dirpath)
+        self.progressBar.setValue(0)
+        self.progressBar.setProperty('visible', 1)
+        count = 0
+        total_count = len(self.bandwidths)
+        QApplication.processEvents()
+        for bandwidth, dict_data in self.dict_extremums_data.items():
+            count += 1
+            progress = count*100/total_count
+            self.progressBar.setValue(progress)
+            QApplication.processEvents()
+            res = write_out_data(
+                self.target_dirpath, 
+                bandwidth,
+                dict_data)
     
     def export_data(self):
         
