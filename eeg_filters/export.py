@@ -7,25 +7,39 @@ def create_head_output_file(source_filepath, target_filepath, bandwidth):
     with open(source_filepath,'r') as file:
         textfile = file.read()
         header = textfile.split('Data:')[0]+'\n Data: \n'
-        with open('%s%s.dat' % (target_filepath, bandwidth),'a') as outfile:
+        with open( target_filepath, 'a' ) as outfile:
             outfile.write(header)
 
 
-def write_out_data(target_dirpath, bandwidth, dict_data, dict_extremums=None):
+def write_out_data(
+                    count_row,
+                    source_filepath, 
+                    target_dirpath, 
+                    bandwidth, 
+                    dict_data, 
+                    dict_extremums=None
+                    ):
     '''
     Write data to putput
     '''
-    filepath = os.path.join(
+    target_filepath = os.path.join(
             target_dirpath, 
             'filter%s.dat' % bandwidth
             )
-    with open( filepath, 'a' ) as outfile:
-        for i in range(1, len(dict_data)+1):
-            outfile.write('     '+str(i))
+    print('DICT_DATA: ', dict_data)
+    create_head_output_file(
+                                source_filepath,
+                                target_filepath, 
+                                bandwidth
+                                )
+    keys = dict_data.keys()
+    with open( target_filepath, 'a' ) as outfile:
+        for numrow in range( 0, len(keys) ):
+            outfile.write('     '+str(numrow + 1))
         outfile.write('\n')
-        for row in range(0,3000):
-            outfile.write('   %s:   ' % str(row+1))
-            for col in range(0, len(dict_data)):
-                outfile.write('%s    '% dict_data[col][row])
+        for row in range( 0, count_row ):
+            outfile.write('   %s:   ' % str(row + 1))
+            for timestamp in keys:
+                outfile.write('%.5f    ' % dict_data[timestamp][row])
             outfile.write('\n')
     return True

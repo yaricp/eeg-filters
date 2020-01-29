@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import (QMainWindow,
                             QAction, 
                             QFileDialog, 
                             QApplication,
+                            QAbstractItemView
                             )
                             
 import ui
@@ -21,6 +22,7 @@ from settings import *
 
 
 class MainWindow(QMainWindow, ui.Ui_MainWindow):
+    
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -45,7 +47,6 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.list_data = []
         self.tick_times = 0
         
-        print(dir(self.lineEdit_1))
         self.lineEdit_1.setText(str(self.start_search))
         self.lineEdit_2.setText(str(self.end_search))
         self.progressBar.setMaximum(100)
@@ -58,7 +59,6 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.graph.setBackground('w')
         self.range_search_extremums = pg.LinearRegionItem(
                 [self.start_search, self.end_search])
-        print(dir(self.range_search_extremums))
         self.range_search_extremums.setBrush(
                 QtGui.QBrush(QtGui.QColor(0, 0, 255, 50))
                 )
@@ -107,15 +107,20 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         
         if self.total_count == 0:
             return False
-        print(1)
         index = self.listWidget.currentRow()
+        item = self.listWidget.currentItem()
+        print(dir(item))
+        for ind in range(0, self.listWidget.count()):
+            self.listWidget.item(ind).setFlags(
+                                    QtCore.Qt.NoItemFlags)
+        QApplication.processEvents()
         bandwidth = self.bandwidths[index]
         print('before clear')
-        QApplication.processEvents()
+        #QApplication.processEvents()
         self.graph.clear()
         self.dict_max_for_iter = {}
         print('after clear')
-        QApplication.processEvents()
+        #QApplication.processEvents()
         iter = 0
         last_max_value = 0
         self.progressBar.setProperty("visible", 1)
@@ -147,6 +152,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         if self.total_count == 0:
             return False
         index = self.listWidget.currentRow()
+        print('INDEX:', index)
         bandwidth = self.bandwidths[index]
         iter_max = 0
         iter_min = 0
@@ -178,9 +184,20 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                     symbolSize=5, symbolBrush=('b'))
             self.dict_showed_extremums.update({time_stamp:[showed_max, showed_min]})
         self.progressBar.setProperty("visible", 0)
+        print('list: ', self.listWidget.count())
+        for ind in range(0, self.listWidget.count()):
+            item = self.listWidget.item(ind)
+            self.listWidget.itemActivated(item)
+#            self.listWidget.item(ind).setFlags(
+#                                    QtCore.Qt.ItemIsEnabled)
+#            self.listWidget.item(ind).setFlags(
+#                                    QtCore.Qt.ItemIsSelectable)
+#            self.listWidget.item(ind).setFlags(
+#                                    QtCore.Qt.ItemIsUserCheckable)
         return True
         
     def change_text_line_edits(self):
+        
         if self.total_count == 0 or not self.dict_showed_extremums:
             return False
         self.range_search_extremums.setRegion([
@@ -233,7 +250,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
             
     def show_graphic_source(self):
-        
+        print(self.listWidget.currentRow())
         if self.total_count == 0:
             return False
         iter = 0
@@ -293,8 +310,8 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.lineEdit_3.clear()
         
     def change_value_slider(self):
+        
         self.iter_value = self.slider1.value()*self.max_iter_value/20
-        print(self.iter_value)
         QApplication.processEvents()
         self.show_graphic_filtered()
         return True 
@@ -312,6 +329,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return self.source_filepath
         
     def prepare_data(self):
+        
         print('loading data...')
         self.dict_bandwidth_data = {}
         #self.progress.setValue(self.completed)
@@ -324,30 +342,41 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         #print(self.dict_bandwidth_data)
         
     def save_button_pressed(self):
+        
         if not self.target_dirpath:
             self.target_dirpath = self.fileDialogSave.getExistingDirectory(
                                     self, 
                                     'Save filtered data', 
                                     './')
-        print(self.target_dirpath)
+        if not self.target_dirpath:
+            return False
+        QApplication.processEvents()
+        self.export_data()
+        return True
+        
+    def export_data(self):
+        
+        key, value = self.dict_bandwidth_data.popitem()
+        key, rows = value.popitem()
+        count_rows = len(rows)
         self.progressBar.setValue(0)
         self.progressBar.setProperty('visible', 1)
         count = 0
         total_count = len(self.bandwidths)
-        QApplication.processEvents()
-        for bandwidth, dict_data in self.dict_extremums_data.items():
+        for bandwidth, dict_data in self.dict_bandwidth_data.items():
             count += 1
             progress = count*100/total_count
             self.progressBar.setValue(progress)
             QApplication.processEvents()
             res = write_out_data(
+                count_rows, 
+                self.source_filepath, 
                 self.target_dirpath, 
                 bandwidth,
                 dict_data)
-    
-    def export_data(self):
-        
-        pass
+        self.progressBar.setValue(0)
+        self.progressBar.setProperty('visible', 0)
+        print('Files Saved')
     
 
 if __name__=='__main__':

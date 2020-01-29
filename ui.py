@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(994, 568)
+        MainWindow.resize(1000, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setEnabled(True)
         self.centralwidget.setObjectName("centralwidget")
@@ -51,7 +51,7 @@ class Ui_MainWindow(object):
         self.widget.setGeometry(QtCore.QRect(20, 50, 861, 471))
         self.widget.setObjectName("widget")
         self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
-        self.progressBar.setGeometry(QtCore.QRect(20, 517, 830, 31))
+        self.progressBar.setGeometry(QtCore.QRect(20, 525, 830, 31))
         self.progressBar.setProperty("value", 0)
         self.progressBar.setProperty("visible", 0)
         self.progressBar.setObjectName("progressBar")
