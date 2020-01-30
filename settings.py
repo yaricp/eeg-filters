@@ -8,6 +8,7 @@ ORDER = 1
 START_SEARCH = 0.08
 END_SEARCH = 0.1
 BANDWIDTHS = [
+                'source', 
                [1, 100],
                [5, 100],
                [10, 100],

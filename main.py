@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import (QMainWindow,
                             QAction, 
                             QFileDialog, 
                             QApplication,
-                            QAbstractItemView
+                            QAbstractItemView, 
                             )
                             
 import ui
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.progressBar.setMaximum(100)
 #        self.progressBar.progressChanged.connect(progressBar.setValue, QtCore.Qt.QueuedConnection)
         self.listWidget.addItems(['%s'%b for b in self.bandwidths])
-        self.listWidget.itemSelectionChanged.connect(self.show_graphic_filtered)
+        self.listWidget.itemClicked.connect(self.list_item_activated)
         
         self.graph = pg.PlotWidget(self.widget)
         self.graph.setGeometry(QtCore.QRect(0, 0, 830, 475))
@@ -77,6 +77,11 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         saveFileButton.setStatusTip('Save Filtered Data')
         saveFileButton.triggered.connect(self.save_button_pressed)
         
+        closeFileButton = QAction(QIcon('close.png'), 'Close', self)
+        closeFileButton.setShortcut('Ctrl+X')
+        closeFileButton.setStatusTip('Close')
+        closeFileButton.triggered.connect(self.close_button_pressed)
+        
         self.lineEdit_1.returnPressed.connect(
                 self.change_text_line_edits
                 )
@@ -86,154 +91,87 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         
         self.fileDialogOpen = QFileDialog()
         self.fileDialogOpen.setFileMode(0)
-        
         self.fileDialogSave = QFileDialog()
         self.fileDialogSave.setFileMode(4)
         
         self.pushButton.clicked.connect(self.show_dialog_open)
-        self.pushButton_2.clicked.connect(self.show_graphic_filtered)
         self.pushButton_3.clicked.connect(self.add_new_bandwidth)
         self.pushButton_4.clicked.connect(self.save_button_pressed)
-        self.pushButton_5.clicked.connect(self.show_graphic_source)
-        
         self.slider1.valueChanged.connect(self.change_value_slider)
         
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(openFileButton)
         fileMenu.addAction(saveFileButton)
+        fileMenu.addAction(closeFileButton)
         
-    def show_graphic_filtered(self, start=None):
+    def list_item_activated(self, item):
+        if item.text() == 'source' and not self.source_filepath:
+            self.show_dialog_open()
+            return True
+        self.show_graphic_filtered()
+        
+        
+    def show_graphic_filtered(self):
         
         if self.total_count == 0:
             return False
         index = self.listWidget.currentRow()
         bandwidth = self.bandwidths[index]
-        if start: bandwidth = 'source'
-            
-            
-#        item = self.listWidget.currentItem()
-#        print(dir(item))
-#        for ind in range(0, self.listWidget.count()):
-#            it = self.listWidget.item(ind)
-##            .setFlags(
-##                                    QtCore.Qt.NoItemFlags)
-#            it.setHidden(True)
-            #it.setFlags(it.flags() | QtCore.Qt.ItemIsEnabled)
-            #print(it.setEnableState(QtCore.Qt.Enabled))
-        
         self.dict_max_for_iter = {}
-        flag_new = False
-#        self.progressBar.setProperty("visible", 1)
-#        self.progressBar.setValue(0)
-#        print('check if data ready')
-#        QApplication.processEvents()
         if not '%s' % bandwidth in self.dict_bandwidth_data.keys():
-            #print('calc new data')
             self.calc_add_bandwidth(bandwidth)
-            #flag_new = True
         iter = 0
         last_max_value = 0
         dict_data = self.dict_bandwidth_data['%s' % bandwidth]
         count = 0
-        #print('befoer for')
         for time_stamp, row in dict_data.items():
-#            progress = count*25/self.total_count+25
-#            self.progressBar.setValue(progress)
-#            QApplication.processEvents()
             iter -= self.iter_value + last_max_value
             y = row + iter
-            if start:
-                graph_item = self.graph.plot()
-            else:
-                graph_item = self.graph.getPlotItem().dataItems[count]
-            graph_item.name = '%s' % bandwidth
+            graph_item = self.graph.getPlotItem().dataItems[count]
             graph_item.setData(self.tick_times,  y,)
             last_max_value = max(row)
             self.dict_max_for_iter.update({time_stamp:iter})
             count += 1
-        self.show_graphic_extremums(start=True)
+        self.show_graphic_extremums()
         return True
 
-    def show_graphic_extremums(self, start=False):
+    def show_graphic_extremums(self):
         print('start show extremums')
-        
         if self.total_count == 0:
             return False
         index = self.listWidget.currentRow()
-        print('INDEX:', index)
         bandwidth = self.bandwidths[index]
-        if start: bandwidth = 'source'
         iter_max = 0
         iter_min = 0
         self.range_search_extremums.setRegion([
                 float(self.lineEdit_1.text()), 
                 float(self.lineEdit_2.text())
                 ])
-        print('before show range')
         self.graph.addItem(self.range_search_extremums)
-        print('after show range')
         if not '%s' % bandwidth in self.dict_extremums_data:
-            print('before calc')
             self.calc_add_extremums(bandwidth)
-        print('get dict data')
         dict_data = self.dict_extremums_data['%s' % bandwidth]
-        count = 0
-        pen = pg.mkPen(color=(255, 0, 0), width=15, style=QtCore.Qt.DashLine)
-        print('before itreration rows')
         for time_stamp, row in dict_data.items():
-            
-#            progress = count*25/self.total_count+75
-#            self.progressBar.setValue(progress)
-#            QApplication.processEvents()
             iter_max = self.dict_max_for_iter[time_stamp]
             iter_min = self.dict_max_for_iter[time_stamp]
             max_x = row['max'][0]
             max_y = row['max'][1] + iter_max
             min_x = row['min'][0]
             min_y = row['min'][1] + iter_min
-            
-            if not time_stamp in self.dict_showed_extremums:
-                showed_max = self.graph.plot(   
-                        [], 
-                        [], 
-                        symbol='o', 
-                        pen=pen, 
-                        symbolSize=5, 
-                        symbolBrush=('r')
-                        )
-                showed_min = self.graph.plot(
-                        [], 
-                        [], 
-                        symbol='o', 
-                        pen=pen, 
-                        symbolSize=5, 
-                        symbolBrush=('b')
-                        )
-#                print('INDEX OF PLOT: ', self.graph.getPlotItem().dataItems.index(showed_max))
-#                print('INDEX OF PLOT: ', self.graph.getPlotItem().dataItems.index(showed_min))
-                self.dict_showed_extremums.update(
-                        {time_stamp:[showed_max, showed_min]}
-                    )
-            else:
-                showed_max = self.dict_showed_extremums[time_stamp][0]
-                showed_min = self.dict_showed_extremums[time_stamp][1]
+            showed_max = self.dict_showed_extremums[time_stamp][0]
+            showed_min = self.dict_showed_extremums[time_stamp][1]
             showed_max.setData([max_x, ],[max_y, ])
             showed_min.setData([min_x,], [min_y,])
-            
-            count += 1
-        #self.progressBar.setProperty("visible", 0)
-#        print('list: ', self.listWidget.count())
-#        for ind in range(0, self.listWidget.count()):
-#            it = self.listWidget.item(ind)
-#            it.setHidden(False)
+        self.progressBar.setValue(0)
+        self.progressBar.setProperty('visible', 0)
         return True
         
     def change_text_line_edits(self):
         
         if self.total_count == 0 or not self.dict_showed_extremums:
             return False
-        self.self.dict_extremums_data = {}
+        self.dict_extremums_data = {}
         self.range_search_extremums.setRegion([
                 float(self.lineEdit_1.text()), 
                 float(self.lineEdit_2.text())
@@ -242,7 +180,6 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         bandwidth = self.bandwidths[index]
         self.calc_add_extremums(bandwidth)
         dict_data = self.dict_extremums_data['%s' % bandwidth]
-        
         for time_stamp, row in dict_data.items():
             iter_max = self.dict_max_for_iter[time_stamp]
             iter_min = self.dict_max_for_iter[time_stamp]
@@ -271,7 +208,6 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                 str(round(self.range_search_extremums.getRegion()[1], 5)))
         self.calc_add_extremums(bandwidth)
         dict_data = self.dict_extremums_data['%s' % bandwidth]
-        
         for time_stamp, row in dict_data.items():
             iter_max = self.dict_max_for_iter[time_stamp]
             iter_min = self.dict_max_for_iter[time_stamp]
@@ -285,29 +221,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
             showed_min.setData([min_x, ], [min_y, ])
             self.dict_showed_extremums.update({time_stamp:[showed_max, showed_min]})
         return True
-            
-    def show_graphic_source(self):
-        self.show_graphic_filtered(start=True)
-        
-        #print(self.listWidget.currentRow())
-        
-#        iter = 0
-#        last_max_value = 0
-#        flag_new = False
-#        if not self.graph.getPlotItem().dataItems:
-#            flag_new = True
-#        count = 0
-        
-#            iter -= self.iter_value + last_max_value
-#            y = row + iter
-#            if flag_new:
-#                self.graph.plot(self.tick_times,  y)
-#            else:
-#                plot = self.graph.getPlotItem().dataItems[count]
-#                plot.setData(self.tick_times,  y)
-#            last_max_value = max(row)
-#            count += 1
-            
+
     def calc_add_extremums(self, bandwidth):
         
         where_find = self.range_search_extremums.getRegion()
@@ -333,12 +247,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
     def calc_add_bandwidth(self, bandwidth):
         
         dict_curves_filtred = {}
-#        count = 0
         for key_curv, row in zip (self.list_times, self.list_data):
-#            count += 1
-#            progress = count*50/self.total_count
-#            self.progressBar.setValue(progress)
-#            QApplication.processEvents()
             filtred_data = make_filter(row, bandwidth, self.fs, self.order)
             dict_curves_filtred.update({key_curv:filtred_data})
         self.dict_bandwidth_data.update({'%s' % bandwidth:dict_curves_filtred})
@@ -370,7 +279,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                                                     './')[0]
         if not self.source_filepath:
             return False
-        QApplication.processEvents()
+        item = self.listWidget.item(0)
+        item.setSelected(True)
+        self.listWidget.setCurrentItem(item)
         self.prepare_data()
         return self.source_filepath
         
@@ -380,7 +291,8 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
             return False
         print('loading data...')
         self.dict_bandwidth_data = {}
-        #self.progress.setValue(self.completed)
+        self.dict_extremums_data = {}
+        #self.dict_showed_extremums = {}
         (self.fs, 
         self.list_times, 
         self.list_data) = prepare_data(self.source_filepath)
@@ -389,11 +301,56 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         if self.total_count == 0:
             return False
         dict_curves_filtred = {}
-        for key_curv, row in zip (self.list_times, self.list_data):
-            dict_curves_filtred.update({ key_curv:row })
+        count = 0
+        flag_new = False
+        self.listWidget.setHidden(1)
+        self.progressBar.setValue(0)
+        self.progressBar.setProperty('visible', 1)
+        pen2 = pg.mkPen(color=(255, 0, 0), width=15, style=QtCore.Qt.DashLine)
+        if not self.graph.getPlotItem().dataItems:
+            flag_new = True
+        for time_stamp, row in zip (self.list_times, self.list_data):
+            count += 1
+            progress = count*50/self.total_count
+            self.progressBar.setValue(progress)
+            QApplication.processEvents()
+            dict_curves_filtred.update({ time_stamp:row })
+            #prepare graph
+            if flag_new:
+                self.graph.plot(
+                        name = time_stamp
+                        )
+        if flag_new:
+            for time_stamp in self.list_times:
+                count += 1
+                progress = count*50/self.total_count
+                self.progressBar.setValue(progress)
+                showed_max = self.graph.plot(   
+                        [0, 0], 
+                        [0, 0], 
+                        name='max_%s' % time_stamp, 
+                        symbol='o', 
+                        pen=pen2, 
+                        symbolSize=5, 
+                        symbolBrush=('r')
+                        )
+                showed_min = self.graph.plot(
+                        [0, 0], 
+                        [0, 0], 
+                        name='min_%s' % time_stamp,
+                        symbol='o', 
+                        pen=pen2, 
+                        symbolSize=5, 
+                        symbolBrush=('b')
+                        )
+                self.dict_showed_extremums.update(
+                            {time_stamp:[showed_max, showed_min]}
+                        )
         self.dict_bandwidth_data.update({ 'source':dict_curves_filtred })
-        self.show_graphic_filtered(start=True)
-        
+        self.show_graphic_filtered()
+        self.progressBar.setValue(0)
+        self.progressBar.setProperty('visible', 0)
+        self.listWidget.setHidden(0)
         
     def save_button_pressed(self):
         
@@ -410,11 +367,12 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         
     def export_data(self):
         
-        key, value = self.dict_bandwidth_data.popitem()
-        key, rows = value.popitem()
+        value = self.dict_bandwidth_data[self.bandwidths[0]]
+        rows = value[self.list_times[0]]
         count_rows = len(rows)
         self.progressBar.setValue(0)
         self.progressBar.setProperty('visible', 1)
+        self.listWidget.setHidden(1)
         count = 0
         total_count = len(self.bandwidths)
         for bandwidth, dict_data in self.dict_bandwidth_data.items():
@@ -422,7 +380,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
             progress = count*100/total_count
             self.progressBar.setValue(progress)
             QApplication.processEvents()
-            res = write_out_data(
+            write_out_data(
                 count_rows, 
                 self.source_filepath, 
                 self.target_dirpath, 
@@ -430,7 +388,14 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                 dict_data)
         self.progressBar.setValue(0)
         self.progressBar.setProperty('visible', 0)
+        self.listWidget.setHidden(0)
         print('Files Saved')
+        
+    def close_button_pressed(self):
+        if self.dict_bandwidth_data:
+            self.save_button_pressed()
+        QApplication.quit()
+        
     
 
 if __name__=='__main__':

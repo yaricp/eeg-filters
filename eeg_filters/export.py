@@ -26,7 +26,6 @@ def write_out_data(
             target_dirpath, 
             'filter%s.dat' % bandwidth
             )
-    print('DICT_DATA: ', dict_data)
     create_head_output_file(
                                 source_filepath,
                                 target_filepath, 

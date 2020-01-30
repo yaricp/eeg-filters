@@ -5,7 +5,6 @@ def prepare_data(filepath):
     function get rows from input file 
     and append data to dictionary of data
     '''
-    #dict_curves = {}
     list_times = []
     position = ''
     tmp_count = 0
@@ -29,7 +28,9 @@ def prepare_data(filepath):
                tmp_count += 1
                continue
             if position == 'times':
-                list_times = [row.split('   ')[i].replace(' ','') for i in range(1,len(row.split('   '))-1)]
+                splitted_row = row.replace('\n','').split('   ')
+                if len(splitted_row) > 1:
+                    list_times = [splitted_row[i].replace(' ','') for i in range(1,len(splitted_row)-1)]
                 tmp_count = 0
             else:
                 target_list = append_data_to_list(target_list,row)
@@ -45,8 +46,10 @@ def append_data_to_list(target_list, row):
     row_splitted = row.split(':')[1].split('   ')
     rowlist = []
     for i in range(1,len(row_splitted)):
-        value = float(row_splitted[i].replace(' ',''))
-        rowlist.append(value)
+        str_value = row_splitted[i].replace(' ','')
+        if str_value:
+            int_value = float(row_splitted[i].replace(' ',''))
+            rowlist.append(int_value)
     target_list.append(rowlist)
     return target_list
     
