@@ -1,23 +1,20 @@
 #!/usr/bin/env python3
 
-import time, datetime
 import pyqtgraph as pg
 
-from PyQt5 import QtCore, uic, QtGui
+from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import (QMainWindow, 
-                            QTextEdit,
                             QAction, 
                             QFileDialog, 
-                            QApplication,
-                            QAbstractItemView, 
+                            QApplication
                             )
                             
 import ui
 
 from eeg_filters.upload import prepare_data
 from eeg_filters.filters import make_filter, search_max_min, get_tick_times
-from eeg_filters.export import create_head_output_file, write_out_data
+from eeg_filters.export import write_out_data
 from settings import *
 
 
