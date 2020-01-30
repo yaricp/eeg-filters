@@ -50,6 +50,7 @@ def search_max_min(list_ticks, data, where_find):
     min_index = np.where(search_slice == np.amin(search_slice))[0][0]
     return {'max':(list_ticks[begin_index + max_index], local_max), 
             'min':(list_ticks[begin_index + min_index], local_min)}
+
             
 def get_index_time(list_ticks, time):
     ticks_array = np.array(list_ticks)
