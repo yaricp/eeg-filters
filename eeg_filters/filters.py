@@ -4,7 +4,7 @@ Module especially for filtering signal EEG.
 It based on Butterworth filter from scipy.signal
 You can look example:
 https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
-
+Also you can search extremums in EEG signal into time borders.
 """
 import numpy as np
 from scipy.signal import butter, filtfilt   #lfilter,
