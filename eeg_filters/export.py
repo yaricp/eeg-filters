@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+"""
+Module for export data of EEG signal to file.
+
+Format of output files -.
+
+"""
+
 import os
 
 
@@ -7,7 +14,7 @@ def __create_head_output_file(
                             source_filepath: str,
                             target_filepath: str,
                             bandwidth: str) -> None:
-    """ create header of output files """
+    """ Create header of output files. """
     with open(source_filepath, 'r') as file:
         textfile = file.read()
         header = textfile.split('Data:')[0]+'\n Data: \n'
@@ -23,7 +30,7 @@ def write_out_data(
                     dict_data: dict,
                     dict_extremums: dict = None
                     ) -> bool:
-    """Write data to putput"""
+    """Write data to putput."""
     target_filepath = os.path.join(
             target_dirpath,
             'filter%s.dat' % bandwidth

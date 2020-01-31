@@ -1,14 +1,33 @@
 # -*- coding: utf-8 -*-
 
+"""
+Module for extract data of EEG signals by time of measuring.
+
+It contain one public function:
+    prepare_data - get filepath and give tuple of data;
+and one private function:
+    __append_data_to_list - for append data to list;
+Input file can be only format -.
+
+"""
+
 import numpy as np
 
 
 def prepare_data(filepath: str) -> tuple:
     """
-    function get rows from input file
-    and append data to dictionary of data
+    Function get rows from input file and put data to dictionary of data.
+
+    input:
+        filepath - path to source file with EEG signals;
+    output:
+        sample_rate - Sample rate from file;
+        list_times - list times of measured EEG signal;
+        list_out - list of lists with values EEG signals
+        (list of lists of curves).
 
     """
+
     list_times = []
     position = ''
     tmp_count = 0
@@ -16,7 +35,7 @@ def prepare_data(filepath: str) -> tuple:
     with open(filepath, 'r') as file:
         for row in file.readlines():
             if row.find('Sampling rate: ') != -1:
-                simple_rate = float(
+                sample_rate = float(
                         row.split('Sampling rate: ')[1].replace('Hz', '')
                         )
                 continue
@@ -45,11 +64,12 @@ def prepare_data(filepath: str) -> tuple:
             else:
                 target_list = __append_data_to_list(target_list, row)
     list_out = np.array(target_list).transpose()
-    return simple_rate, list_times, list_out
+    return sample_rate, list_times, list_out
 
 
 def __append_data_to_list(target_list: list, row: str) -> list:
-    """ Append data from row of file to dict of data """
+    """ Append data from row of source file to list of data. """
+
     row = row.replace('\n', '')
     row_splitted = row.split(':')[1].split('   ')
     rowlist = []
