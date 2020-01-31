@@ -1,52 +1,52 @@
 # -*- coding: utf-8 -*-
+"""
+Module especially for filtering signal EEG.
+It based on Butterworth filter from scipy.signal
+You can look example:
+https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
+
+"""
 import numpy as np
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, filtfilt   #lfilter,
 
 
 def get_tick_times(fs: int, time_measuring: float) -> list:
-    """get ticks time of measured value """
+    """get times of measured value of EEG signal """
     n = int(time_measuring * fs)       # total number of samples
     return np.linspace(0, time_measuring, n, endpoint=False)
 
 
-def butter_filter(
-                data: list,
-                cutoff: int,
-                fs: int,
-                btype: str,
-                order: int = 5
-                ) -> list:
-    """Make filter of list of data"""
+def make_filter(dataset: list, bandwidth: list, fs: int, order: int) -> list:
+    """
+    Apply Butterworth bandpass filter to dataset with bandwidth
+    input:
+        dataset - data of EEG signal for filtering;
+        bandwidth - list of borders frequencies for filtering in Hz;
+        fs - frequency sample rate;
+        order - order of Butterworth filter;
+    output:
+        list of filtered data of EEG signal
+    """
+    # prepare data of signal
+    data = np.array(dataset)
+    # convert border frequencies from Hz 
+    # to sampling frequency of the digital system
     nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype=btype, analog=False)
-    return lfilter(b, a, data)
+    normal_bandpass = [bandwidth[0] / nyq, bandwidth[1] / nyq]
+    # applying Butterworth filter
+    b, a = butter(order, normal_bandpass, btype='bandpass', analog=False)
+    # b, a  - Numerator (b) and denominator (a) polynomials of the IIR filter
+    return filtfilt(b, a, data) #lfilter(b, a, data)
 
 
-def make_filter(row: list, bandwidth: list, fs: int, order: int) -> list:
-    """Function  filters dataset by bandwidth"""
-    data = np.array(row)
-    cutted_low_data = butter_filter(
-            data,
-            bandwidth[1],
-            fs,
-            'low',
-            order
-            )
-    cutted_high_data = butter_filter(
-            cutted_low_data,
-            bandwidth[0],
-            fs,
-            'high',
-            order
-            )
-    return cutted_high_data
-
-
-def search_max_min(list_ticks: list, data: list, where_find: list) -> dict:
+def search_max_min(list_ticks: list, signal_data: list, where_find: list) -> dict:
     """
     Function searches maximum and minimum in slice of dataset.
     Also it searches time of maximum and minimum.
+    input:
+        list_ticks - list of time of measured value in EEG signal;
+        signal_data - list of values of EEG signal;
+        where_find - list of border of times for search extremums;
     Function returns the dictionary of extremums.
     First element of tuple in row of dictionary is a time,
     second is value of extremum.
@@ -54,7 +54,7 @@ def search_max_min(list_ticks: list, data: list, where_find: list) -> dict:
     """
     begin_index = get_index_time(list_ticks, where_find[0])
     end_index = get_index_time(list_ticks, where_find[1])
-    search_slice = data[begin_index:end_index]
+    search_slice = signal_data[begin_index:end_index]
     local_max = np.amax(search_slice)
     local_min = np.amin(search_slice)
     max_index = np.where(search_slice == np.amax(search_slice))[0][0]
@@ -64,7 +64,7 @@ def search_max_min(list_ticks: list, data: list, where_find: list) -> dict:
 
 
 def get_index_time(list_ticks: list, time: float) -> int:
-    """Get index in time ticks list by floay value of seconds"""
+    """Get index in time ticks list by float value of seconds"""
     ticks_array = np.array(list_ticks)
     index = np.where(ticks_array >= time)[0][0]
     return index
