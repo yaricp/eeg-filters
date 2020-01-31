@@ -15,7 +15,7 @@ from scipy.signal import butter, filtfilt   # lfilter,
 
 
 def get_tick_times(fs: int, time_measuring: float) -> list:
-    """Get times of measured value of EEG signal."""
+    """Get times of measured value of EEG signal. Returns: list times."""
 
     n = int(time_measuring * fs)       # total number of samples
     return np.linspace(0, time_measuring, n, endpoint=False)
@@ -30,7 +30,7 @@ def make_filter(dataset: list, bandwidth: list, fs: int, order: int) -> list:
         bandwidth - list of borders frequencies for filtering in Hz;
         fs - frequency sample rate;
         order - order of Butterworth filter;
-    output:
+    Returns:
         list of filtered data of EEG signal.
 
     """
@@ -64,7 +64,7 @@ def search_max_min(
         list_ticks - list of time of measured value in EEG signal;
         signal_data - list of values of EEG signal;
         where_find - list of border of times for search extremums;
-    Function returns the dictionary of extremums.
+    Returns: dictionary of extremums.
     First element of tuple in row of dictionary is a time,
     second is value of extremum.
 
@@ -82,6 +82,12 @@ def search_max_min(
 
 
 def get_index_time(list_ticks: list, time: float) -> int:
-    """Get index in time ticks list by float value of seconds."""
+    """
+    Get index in time ticks list by float value of seconds.
+
+    Returns: integer value of index.
+
+    """
+
     ticks_array = np.array(list_ticks)
     return np.where(ticks_array >= time)[0][0]

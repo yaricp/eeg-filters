@@ -30,7 +30,7 @@ def write_out_data(
                     dict_data: dict,
                     dict_extremums: dict = None
                     ) -> bool:
-    """Write data to putput."""
+    """Write data to putput. Returns: True if export ok."""
     target_filepath = os.path.join(
             target_dirpath,
             'filter%s.dat' % bandwidth

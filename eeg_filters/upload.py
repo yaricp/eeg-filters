@@ -20,7 +20,7 @@ def prepare_data(filepath: str) -> tuple:
 
     input:
         filepath - path to source file with EEG signals;
-    output:
+    Returns:
         sample_rate - Sample rate from file;
         list_times - list times of measured EEG signal;
         list_out - list of lists with values EEG signals
@@ -68,7 +68,12 @@ def prepare_data(filepath: str) -> tuple:
 
 
 def __append_data_to_list(target_list: list, row: str) -> list:
-    """ Append data from row of source file to list of data. """
+    """
+    Append data from row of source file to list of data.
+
+    Returns: list of data.
+
+    """
 
     row = row.replace('\n', '')
     row_splitted = row.split(':')[1].split('   ')
