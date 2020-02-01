@@ -128,7 +128,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         dict_data = self.dict_bandwidth_data['%s' % bandwidth]
         count = 0
         for time_stamp, row in dict_data.items():
-            delta -= self.iter_value + last_max_value
+            delta -= self.iter_value 	#+ last_max_value
             y = row + delta
             graph_item = self.graph.getPlotItem().dataItems[count]
             graph_item.setData(self.tick_times,  y,)
@@ -137,7 +137,6 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
             count += 1
         self.show_graphic_extremums()
         return True
-
     def show_graphic_extremums(self: dict) -> bool:
         print('start show extremums')
         if self.total_count == 0:
