@@ -35,8 +35,14 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.start_search = START_SEARCH
         self.end_search = END_SEARCH
         self.bandwidths = BANDWIDTHS
-        self.iter_value = ITER_VALUE
         self.max_iter_value = MAX_ITER_VALUE
+        self.max_step_iter = MAX_STEP_ITER
+        self.default_step_iter = DEFAULT_STEP_ITER
+        self.iter_value = (
+                            MAX_ITER_VALUE
+                            *DEFAULT_STEP_ITER
+                            /MAX_STEP_ITER
+                            )
 
         self.source_filepath = ''
         self.target_dirpath = ''
@@ -98,7 +104,12 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.pushButton.clicked.connect(self.show_dialog_open)
         self.pushButton_3.clicked.connect(self.add_new_bandwidth)
         self.pushButton_4.clicked.connect(self.save_button_pressed)
+        
+        self.slider1.setMinimum(0)
+        self.slider1.setMaximum(self.max_step_iter)
+        self.slider1.setValue(self.default_step_iter)
         self.slider1.valueChanged.connect(self.change_value_slider)
+        
 
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
@@ -275,7 +286,10 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
 
     def change_value_slider(self: dict) -> bool:
 
-        self.iter_value = self.slider1.value()*self.max_iter_value/20
+        self.iter_value = (self.slider1.value()
+                *self.max_iter_value
+                /self.max_step_iter
+                )
         QApplication.processEvents()
         self.show_graphic_filtered()
         return True

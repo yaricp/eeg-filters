@@ -49,9 +49,7 @@ class Ui_MainWindow(object):
         self.progressBar.setObjectName("progressBar")
         self.slider1 = QtWidgets.QSlider(QtCore.Qt.Vertical, self.centralwidget)
         self.slider1.setGeometry(QtCore.QRect(860, 50, 20, 391))
-        self.slider1.setMinimum(0)
-        self.slider1.setMaximum(20)
-        self.slider1.setValue(5)
+        
         self.slider1.setTickPosition(QtWidgets.QSlider.TicksBelow)
         self.slider1.setTickInterval(1)
         MainWindow.setCentralWidget(self.centralwidget)
