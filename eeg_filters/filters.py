@@ -55,7 +55,8 @@ def make_filter(dataset: list, bandwidth: list, fs: int, order: int) -> list:
 def search_max_min(
                 list_ticks: list,
                 signal_data: list,
-                where_find: list) -> dict:
+                where_find: list, 
+                what_find: str) -> tuple:
     """
     Function searches maximum and minimum in slice of dataset.
 
@@ -64,22 +65,22 @@ def search_max_min(
         list_ticks - list of time of measured value in EEG signal;
         signal_data - list of values of EEG signal;
         where_find - list of border of times for search extremums;
-    Returns: dictionary of extremums.
-    First element of tuple in row of dictionary is a time,
-    second is value of extremum.
+        what_find - 'max' or 'min';
+    Returns: tuple -  time, value.
 
     """
 
     begin_index = get_index_time(list_ticks, where_find[0])
     end_index = get_index_time(list_ticks, where_find[1])
     search_slice = signal_data[begin_index:end_index]
-    local_max = np.amax(search_slice)
-    local_min = np.amin(search_slice)
-    max_index = np.where(search_slice == np.amax(search_slice))[0][0]
-    min_index = np.where(search_slice == np.amin(search_slice))[0][0]
-    return {'max': (list_ticks[begin_index + max_index], local_max),
-            'min': (list_ticks[begin_index + min_index], local_min)}
-
+    if what_find == 'max':
+        extremum_value = np.amax(search_slice)
+        extremum_index = np.where(search_slice == np.amax(search_slice))[0][0]
+    else:
+        extremum_value = np.amin(search_slice)
+        extremum_index = np.where(search_slice == np.amin(search_slice))[0][0]
+    return list_ticks[begin_index + extremum_index], extremum_value
+    
 
 def get_index_time(list_ticks: list, time: float) -> int:
     """

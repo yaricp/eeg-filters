@@ -10,8 +10,10 @@ DEFAULT_STEP_ITER = 25
 MAX_ITER_VALUE = 0.005
 MAX_STEP_ITER = 50
 ORDER = 1   # For Butterworth filter
-START_SEARCH = 0.08
-END_SEARCH = 0.1
+MAX_START_SEARCH = 0.08
+MAX_END_SEARCH = 0.1
+MIN_START_SEARCH = 0.18
+MIN_END_SEARCH = 0.2
 BANDWIDTHS = [
                 'source',
                 [1, 100],
