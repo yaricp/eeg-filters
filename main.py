@@ -20,7 +20,7 @@ import ui
 
 from eeg_filters.upload import prepare_data
 from eeg_filters.filters import make_filter, search_max_min, get_tick_times
-from eeg_filters.export import write_out_data
+from eeg_filters.export import export_curves
 from settings import *
 
 
@@ -449,7 +449,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
             progress = count*100/total_count
             self.progressBar.setValue(progress)
             QApplication.processEvents()
-            write_out_data(
+            export_curves(
                 count_rows,
                 self.source_filepath,
                 self.target_dirpath,

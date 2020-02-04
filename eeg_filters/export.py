@@ -22,13 +22,12 @@ def __create_head_output_file(
             outfile.write(header)
 
 
-def write_out_data(
+def export_curves(
                     count_row: int,
                     source_filepath: str,
                     target_dirpath: str,
                     bandwidth: str,
                     dict_data: dict,
-                    dict_extremums: dict = None
                     ) -> bool:
     """Write data to putput. Returns: True if export ok."""
     target_filepath = os.path.join(
@@ -51,3 +50,23 @@ def write_out_data(
                 outfile.write('%.5f    ' % dict_data[timestamp][row])
             outfile.write('\n')
     return True
+    
+
+def export_extremums(
+                    target_dirpath: str,
+                    bandwidth: str,
+                    dict_data: dict,
+                    dict_extremums: dict = None
+                    ) -> bool:
+    """
+    """
+    target_filepath = os.path.join(
+            target_dirpath,
+            'extremums%s.dat' % bandwidth
+            )
+    with open(target_filepath, 'a') as outfile:
+        outfile.write('timestamp\tmaxtime\tmaxval\tmintime\tminval')
+        outfile.write('\n')
+        
+    pass
+    
