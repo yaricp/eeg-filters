@@ -25,7 +25,7 @@ def make_filter(
                 dataset: list,
                 bandwidth: list,
                 fs: int,
-                order: int, 
+                order: int,
                 rp: int) -> list:
     """
     Apply Butterworth bandpass filter to dataset with bandwidth.
@@ -48,9 +48,9 @@ def make_filter(
     normal_bandpass = [bandwidth[0] / nyq, bandwidth[1] / nyq]
     #  applying Butterworth filter
     #  b, a = butter(
-    b, a  = cheby1(
+    b, a = cheby1(
             N=order,
-            rp=rp, 
+            rp=rp,
             Wn=normal_bandpass,
             btype='bandpass',
             analog=False)
@@ -62,7 +62,7 @@ def make_filter(
 def search_max_min(
                 list_ticks: list,
                 signal_data: list,
-                where_find: list, 
+                where_find: list,
                 what_find: str) -> tuple:
     """
     Function searches maximum and minimum in slice of dataset.
@@ -87,7 +87,7 @@ def search_max_min(
         extremum_value = np.amin(search_slice)
         extremum_index = np.where(search_slice == np.amin(search_slice))[0][0]
     return list_ticks[begin_index + extremum_index], extremum_value
-    
+
 
 def get_index_time(list_ticks: list, time: float) -> int:
     """
