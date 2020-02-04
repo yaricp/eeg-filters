@@ -32,6 +32,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
 
         self.time_measuring = TIME_MEASUGING
         self.order = ORDER
+        self.rp = RP
         self.max_start_search = MAX_START_SEARCH
         self.max_end_search = MAX_END_SEARCH
         self.min_start_search = MIN_START_SEARCH
@@ -300,7 +301,13 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
 
         dict_curves_filtred = {}
         for key_curv, row in zip(self.list_times, self.list_data):
-            filtred_data = make_filter(row, bandwidth, self.fs, self.order)
+            filtred_data = make_filter(
+                                row,
+                                bandwidth,
+                                self.fs,
+                                self.order,
+                                self.rp
+                                )
             dict_curves_filtred.update({key_curv: filtred_data})
         self.dict_bandwidth_data.update({
                 '%s' % bandwidth: dict_curves_filtred

@@ -11,7 +11,7 @@ Also you can search extremums in EEG signal into time borders.
 """
 
 import numpy as np
-from scipy.signal import butter, filtfilt   # lfilter,
+from scipy.signal import butter, filtfilt, cheby1   # lfilter,
 
 
 def get_tick_times(fs: int, time_measuring: float) -> list:
@@ -21,7 +21,12 @@ def get_tick_times(fs: int, time_measuring: float) -> list:
     return np.linspace(0, time_measuring, n, endpoint=False)
 
 
-def make_filter(dataset: list, bandwidth: list, fs: int, order: int) -> list:
+def make_filter(
+                dataset: list,
+                bandwidth: list,
+                fs: int,
+                order: int, 
+                rp: int) -> list:
     """
     Apply Butterworth bandpass filter to dataset with bandwidth.
 
@@ -42,9 +47,11 @@ def make_filter(dataset: list, bandwidth: list, fs: int, order: int) -> list:
     nyq = 0.5 * fs
     normal_bandpass = [bandwidth[0] / nyq, bandwidth[1] / nyq]
     #  applying Butterworth filter
-    b, a = butter(
-            order,
-            normal_bandpass,
+    #  b, a = butter(
+    b, a  = cheby1(
+            N=order,
+            rp=rp, 
+            Wn=normal_bandpass,
             btype='bandpass',
             analog=False)
     #  b, a  - Numerator (b) and denominator
