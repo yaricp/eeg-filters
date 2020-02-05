@@ -23,6 +23,7 @@ def prepare_data(filepath: str) -> tuple:
     Returns:
         sample_rate - Sample rate from file;
         list_times - list times of measured EEG signal;
+        list_ticks  - list of times measure;
         list_out - list of lists with values EEG signals
         (list of lists of curves).
 
@@ -32,6 +33,7 @@ def prepare_data(filepath: str) -> tuple:
     position = ''
     tmp_count = 0
     target_list = []
+    count_measure = 0
     with open(filepath, 'r') as file:
         for row in file.readlines():
             if row.find('Sampling rate: ') != -1:
@@ -63,8 +65,15 @@ def prepare_data(filepath: str) -> tuple:
                 tmp_count = 0
             else:
                 target_list = __append_data_to_list(target_list, row)
+                count_measure += 1
     list_out = np.array(target_list).transpose()
-    return sample_rate, list_times, list_out
+    time_measuring = count_measure/sample_rate
+    list_ticks = np.linspace(
+                        0,
+                        time_measuring,
+                        count_measure,
+                        endpoint=False)
+    return sample_rate, list_times, list_ticks, list_out
 
 
 def __append_data_to_list(target_list: list, row: str) -> list:

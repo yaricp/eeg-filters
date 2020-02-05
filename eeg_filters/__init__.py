@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-This package helps you to get data from format ...
+This package helps you to get curves EEG from files exported from
+NeuroEplorer4.4 in acsii format.
 
-and filter it for analize.
-Also you can find extremums of curves in range.
-You can use this package for export filtered data in format ...
+After that you can to filter its for analize.
+
+Also you can find extremums of curves in ranges which you need.
+
+You can use this package for export filtered data in format like 
+from NeuroExplorer4.4.
+
+Extremums can be exported in text file with tab splitted columns.
 
 """
 

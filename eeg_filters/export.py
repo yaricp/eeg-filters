@@ -3,7 +3,9 @@
 """
 Module for export data of EEG signal to file.
 
-Format of output files -.
+Format of output files like NeuroExplorer4.4 text acsii.
+
+Extremums can be exported in text file with tab splitted columns.
 
 """
 

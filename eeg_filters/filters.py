@@ -3,22 +3,82 @@
 """
 Module especially for filtering signal EEG.
 
-It based on Butterworth filter from scipy.signal
+It based on Chebyshev filter from scipy.signal
 You can look example:
-https://scipy-cookbook.readthedocs.io/items/ButterworthBandpass.html
+https://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.signal.cheby1.html
 Also you can search extremums in EEG signal into time borders.
 
 """
 
 import numpy as np
-from scipy.signal import butter, filtfilt, cheby1   # lfilter,
+from scipy.signal import filtfilt, cheby1   # lfilter, butter,
+import matplotlib.pyplot as plt
 
 
-def get_tick_times(fs: int, time_measuring: float) -> list:
-    """Get times of measured value of EEG signal. Returns: list times."""
+def show_plot(
+                list_times: list,
+                list_ticks: list,
+                list_data: list,
+                bandwidth: list,
+                fs: int,
+                order: int = 3,
+                rp: int = 2,
+                iterator: float = 0.004,
+                max_region: list = None,
+                min_region: list = None) -> None:
+    """ Function shows plot of data. """
 
-    n = int(time_measuring * fs)       # total number of samples
-    return np.linspace(0, time_measuring, n, endpoint=False)
+    ITERATOR = iterator
+    iter_value = 0
+    for time_stamp, dataset in zip(list_times, list_data):
+        data = make_filter(
+                    dataset,
+                    bandwidth,
+                    fs,
+                    order,
+                    rp
+                    )
+        iter_value -= ITERATOR
+        y = data + iter_value
+        plt.plot(
+                list_ticks, y, 'g-',
+                linewidth=1,
+                label='filtered data '+str(time_stamp))
+        if max_region:
+            max_t, max_y = search_max_min(
+                                        list_ticks,
+                                        y,
+                                        max_region,
+                                        'max'
+                                        )
+            plt.plot(
+                    [max_t, ],
+                    [max_y, ],
+                    'ro',
+                    markersize=2
+                    )
+        if min_region:
+            min_t, min_y = search_max_min(
+                                        list_ticks,
+                                        y,
+                                        min_region,
+                                        'min'
+                                        )
+            plt.plot(
+                    [min_t, ],
+                    [min_y, ],
+                    'bo',
+                    markersize=2
+                    )
+    plt.axis([0, list_ticks[-1], iter-2*ITERATOR, 2*ITERATOR])
+    plt.xlabel('bandwidth: %s' % bandwidth)
+    plt.grid()
+    name = 'filtered%s' % bandwidth
+    plt.savefig('{}.{}'.format(name, 'png'), fmt='png')
+    try:
+        plt.show()
+    except Exception as e:
+        raise(e)
 
 
 def make_filter(
@@ -28,13 +88,14 @@ def make_filter(
                 order: int,
                 rp: int) -> list:
     """
-    Apply Butterworth bandpass filter to dataset with bandwidth.
+    Apply Chebyshev bandpass filter to dataset with bandwidth.
 
     input:
         dataset - data of EEG signal for filtering;
         bandwidth - list of borders frequencies for filtering in Hz;
         fs - frequency sample rate;
-        order - order of Butterworth filter;
+        order - order of Chebyshev filter;
+        rp - The maximum ripple allowed below unity gain in the passband;
     Returns:
         list of filtered data of EEG signal.
 

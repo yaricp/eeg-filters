@@ -19,7 +19,7 @@ from PyQt5.QtWidgets import (
 import ui
 
 from eeg_filters.upload import prepare_data
-from eeg_filters.filters import make_filter, search_max_min, get_tick_times
+from eeg_filters.filters import make_filter, search_max_min
 from eeg_filters.export import export_curves, export_extremums
 from settings import *
 
@@ -354,9 +354,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         (
             self.fs,
             self.list_times,
+            self.tick_times, 
             self.list_data
         ) = prepare_data(self.source_filepath)
-        self.tick_times = get_tick_times(self.fs, self.time_measuring)
         self.total_count = len(self.list_times)
         if self.total_count == 0:
             return False
