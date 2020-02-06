@@ -1,52 +1,3 @@
-# eeg-filters
-
-Package help you to filter and Analize EEG signals.
-Filter based on Chebyshev filter from scipy.signals
-
-You can take data from files exported from NeuroExplorer Vesion 4.4 in ASCII format.
-You can make filter in some bandwidth like [1, 220].
-It are borders of frequencies in Hz.
-
-Also you can find maximums in some region and minimums in another region.
-
-Finally you can export data to files.
-Data of curves export to like NeuroExplorer format.
-Extremums can be exported in text file with tab splitted columns.
-
-## Requirements
-
-numpy
-scipy
-matplotlib
-
-## Instalation.
-
-pip install eeg_filters
-
-## Usage
-
-For example:
-
-```
-$python3
->>> from eeg_filters.upload import prepare_data
-
->>> from eeg_filters.filters import show_plot
-
->>> sample_rate, list_times, list_ticks, list_out = prepare_data('input/data.txt')
-
->>> show_plot(list_times,list_ticks,list_out,[1, 200],sample_rate,3,2,0.003)
-
->>> show_plot(list_times,list_ticks,list_out,[1, 200],sample_rate,max_region=[0.08,0.104],min_region=[0.105,0.14])
-```
-In this example we made filter in bandwidth = [1, 200].
-And in last line we make show_plot with extremums.
-
-You can use it in scripts like this:
-
-```
-!#/usr/bin/python3
-
 from eeg_filters.upload import prepare_data
 from eeg_filters.filters import make_filter, search_max_min
 from eeg_filters.export import export_curves, export_extremums
@@ -85,20 +36,16 @@ for bandwidth in bandwidths:
                                 )
                                 )})
         
-    # export data of filtered EEG signals
+        
+    print(dict_extremums)
     export_curves(
                 source_file_name,
                 './',
                 bandwidth,
                 dict_data
                 )
-    # export extremums of filtered EEG signals
     export_extremums(
                     './',
                     bandwidth,
                     dict_extremums
                     )
-```
-Also you can use any UI for this package.
-For example you can see this project:
-https://github.com/yaricp/qt5-eeg-filters
