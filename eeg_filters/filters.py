@@ -70,7 +70,7 @@ def show_plot(
                     'bo',
                     markersize=2
                     )
-    plt.axis([0, list_ticks[-1], iter-2*ITERATOR, 2*ITERATOR])
+    plt.axis([0, list_ticks[-1], iter_value-2*ITERATOR, 2*ITERATOR])
     plt.xlabel('bandwidth: %s' % bandwidth)
     plt.grid()
     name = 'filtered%s' % bandwidth
