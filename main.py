@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-"""
-Main file of QT GUI
-"""
+"""Main file of QT GUI."""
 
 import pyqtgraph as pg
 
@@ -26,7 +24,10 @@ from settings import *
 
 class MainWindow(QMainWindow, ui.Ui_MainWindow):
 
+    """Main windows of programm."""
+
     def __init__(self: dict) -> None:
+        """initialization and prepare data."""
         super().__init__()
         self.setupUi(self)
 
@@ -63,16 +64,16 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.lineEditMinStart.setText(str(self.min_start_search))
         self.lineEditMinEnd.setText(str(self.min_end_search))
         self.lineEditMaxStart.returnPressed.connect(
-                self.change_text_line_max_edits
+                self.change_text_line_extremums_edits
                 )
         self.lineEditMaxEnd.returnPressed.connect(
-                self.change_text_line_max_edits
+                self.change_text_line_extremums_edits
                 )
         self.lineEditMinStart.returnPressed.connect(
-                self.change_text_line_min_edits
+                self.change_text_line_extremums_edits
                 )
         self.lineEditMinEnd.returnPressed.connect(
-                self.change_text_line_min_edits
+                self.change_text_line_extremums_edits
                 )
 
         self.progressBar.setMaximum(100)
@@ -90,7 +91,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                 QtGui.QBrush(QtGui.QColor(0, 0, 255, 50))
                 )
         self.range_search_maxmums.sigRegionChangeFinished.connect(
-                self.change_range_search_maxmums
+                self.change_range_search_extremums
                 )
 
         self.range_search_minimums = pg.LinearRegionItem(
@@ -99,28 +100,28 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                 QtGui.QBrush(QtGui.QColor(0, 0, 50, 50))
                 )
         self.range_search_minimums.sigRegionChangeFinished.connect(
-                self.change_range_search_minimums
+                self.change_range_search_extremums
                 )
 
-        openFileButton = QAction(QIcon('open.png'), 'Open', self)
-        openFileButton.setShortcut('Ctrl+O')
-        openFileButton.setStatusTip('Open Source File')
-        openFileButton.triggered.connect(self.show_dialog_open)
+        open_file_button = QAction(QIcon('open.png'), 'Open', self)
+        open_file_button.setShortcut('Ctrl+O')
+        open_file_button.setStatusTip('Open Source File')
+        open_file_button.triggered.connect(self.show_dialog_open)
 
-        saveFileButton = QAction(QIcon('save.png'), 'Save', self)
-        saveFileButton.setShortcut('Ctrl+S')
-        saveFileButton.setStatusTip('Save Filtered Data')
-        saveFileButton.triggered.connect(self.save_button_pressed)
+        save_file_button = QAction(QIcon('save.png'), 'Save', self)
+        save_file_button.setShortcut('Ctrl+S')
+        save_file_button.setStatusTip('Save Filtered Data')
+        save_file_button.triggered.connect(self.save_button_pressed)
 
-        closeFileButton = QAction(QIcon('close.png'), 'Close', self)
-        closeFileButton.setShortcut('Ctrl+X')
-        closeFileButton.setStatusTip('Close')
-        closeFileButton.triggered.connect(self.close_button_pressed)
+        close_file_button = QAction(QIcon('close.png'), 'Close', self)
+        close_file_button.setShortcut('Ctrl+X')
+        close_file_button.setStatusTip('Close')
+        close_file_button.triggered.connect(self.close_button_pressed)
 
-        self.fileDialogOpen = QFileDialog()
-        self.fileDialogOpen.setFileMode(0)
-        self.fileDialogSave = QFileDialog()
-        self.fileDialogSave.setFileMode(4)
+        self.file_dialog_open = QFileDialog()
+        self.file_dialog_open.setFileMode(0)
+        self.file_dialog_save = QFileDialog()
+        self.file_dialog_save.setFileMode(4)
 
         self.pushButton.clicked.connect(self.show_dialog_open)
         self.pushButton_3.clicked.connect(self.add_new_bandwidth)
@@ -132,12 +133,13 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.slider1.valueChanged.connect(self.change_value_slider)
 
         menubar = self.menuBar()
-        fileMenu = menubar.addMenu('&File')
-        fileMenu.addAction(openFileButton)
-        fileMenu.addAction(saveFileButton)
-        fileMenu.addAction(closeFileButton)
+        file_menu = menubar.addMenu('&File')
+        file_menu.addAction(open_file_button)
+        file_menu.addAction(save_file_button)
+        file_menu.addAction(close_file_button)
 
     def __clear_extremums(self: dict) -> None:
+        """ Clear dict of extremums."""
 
         self.dict_extremums_data = {
             'max': {},
@@ -145,7 +147,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
             }
 
     def list_item_activated(self: dict, item: dict) -> bool:
-
+        """handler change bandwidth.
+        Returns - True if ok.
+        """
         if item.text() == 'source' and not self.source_filepath:
             self.show_dialog_open()
             return True
@@ -153,7 +157,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def show_graphic_filtered(self: dict) -> bool:
-
+        """draw plot of filtered data.
+        Returns - True if ok.
+        """
         if self.total_count == 0:
             return False
         index = self.listWidget.currentRow()
@@ -174,7 +180,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def show_graphic_extremums(self: dict) -> bool:
-
+        """draw plot of extremums.
+        Returns - True if ok.
+        """
         if self.total_count == 0:
             return False
         index = self.listWidget.currentRow()
@@ -198,23 +206,20 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.progressBar.setProperty('visible', 0)
         return True
 
-    def change_text_line_max_edits(self: dict) -> bool:
+    def change_text_line_extremums_edits(self: dict) -> bool:
+        """
+        Handler event change text search extremums.
 
+        Returns - True if ok.
+
+        """
         if self.total_count == 0 or not self.dict_showed_extremums:
             return False
-        self.__clear_extremums()
         self.range_search_maxmums.setRegion([
                 float(self.lineEditMaxStart.text()),
                 float(self.lineEditMaxEnd.text())
                 ])
         self.reshow_extremums('max')
-        return True
-
-    def change_text_line_min_edits(self: dict) -> bool:
-
-        if self.total_count == 0 or not self.dict_showed_extremums:
-            return False
-        self.__clear_extremums()
         self.range_search_minimums.setRegion([
                 float(self.lineEditMinStart.text()),
                 float(self.lineEditMinEnd.text())
@@ -222,24 +227,21 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.reshow_extremums('min')
         return True
 
-    def change_range_search_maxmums(self: dict) -> bool:
+    def change_range_search_extremums(self: dict) -> bool:
+        """
+        Handler event change region search extremums.
 
+        Returns - True if ok.
+
+        """
         if self.total_count == 0 or not self.dict_showed_extremums:
             return False
-        self.__clear_extremums()
         self.lineEditMaxStart.setText(
                 str(round(self.range_search_maxmums.getRegion()[0], 5))
                 )
         self.lineEditMaxEnd.setText(
                 str(round(self.range_search_maxmums.getRegion()[1], 5)))
         self.reshow_extremums('max')
-        return True
-
-    def change_range_search_minimums(self: dict) -> bool:
-
-        if self.total_count == 0 or not self.dict_showed_extremums:
-            return False
-        self.__clear_extremums()
         self.lineEditMinStart.setText(
                 str(round(self.range_search_minimums.getRegion()[0], 5))
                 )
@@ -249,7 +251,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def reshow_extremums(self: dict, ext: str) -> bool:
-
+        """draw plot of extremums.
+        Returns - True if ok.
+        """
         delta = 0
         index = self.listWidget.currentRow()
         bandwidth = self.bandwidths[index]
@@ -270,6 +274,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                             bandwidth: list,
                             ext: str
                             ) -> bool:
+        """Calculate extremums on curvey.
+        Returns - True if ok.
+        """
         range_search = self.range_search_maxmums
         if ext == 'min':
             range_search = self.range_search_minimums
@@ -292,7 +299,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def calc_add_bandwidth(self: dict, bandwidth: list) -> bool:
-
+        """Make filter of curves.
+        Returns - True if ok.
+        """
         dict_curves_filtred = {}
         for key_curv, row in zip(self.list_times, self.list_data):
             filtred_data = make_filter(
@@ -309,7 +318,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def add_new_bandwidth(self: dict) -> None:
-
+        """handler event pressed button add bandwidth."""
         text = self.lineEdit_3.text()
         self.listWidget.addItem(text)
         splitted_text = text.split(',')
@@ -321,7 +330,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.lineEdit_3.clear()
 
     def change_value_slider(self: dict) -> bool:
-
+        """Handler event change value slider.
+        Returns - True if ok.
+        """
         self.iter_value = (
                 self.slider1.value()
                 * self.max_iter_value
@@ -332,8 +343,10 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def show_dialog_open(self: dict) -> bool:
-
-        self.source_filepath = self.fileDialogOpen.getOpenFileName(
+        """Show dialog window.
+        Returns - True if ok.
+        """
+        self.source_filepath = self.file_dialog_open.getOpenFileName(
                                                     self,
                                                     'Open source file',
                                                     './')[0]
@@ -346,7 +359,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def prepare_data(self: dict) -> bool:
-
+        """Prepare data and plot after load data.
+        Returns - True if ok.
+        """
         if not self.source_filepath:
             return False
         self.dict_bandwidth_data = {}
@@ -354,7 +369,7 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         (
             self.fs,
             self.list_times,
-            self.tick_times, 
+            self.tick_times,
             self.list_data
         ) = prepare_data(self.source_filepath)
         self.total_count = len(self.list_times)
@@ -421,9 +436,11 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def save_button_pressed(self: dict) -> bool:
-
+        """handler event save button pressed.
+        Returns - True if ok.
+        """
         if not self.target_dirpath:
-            self.target_dirpath = self.fileDialogSave.getExistingDirectory(
+            self.target_dirpath = self.file_dialog_save.getExistingDirectory(
                                     self,
                                     'Save filtered data',
                                     './')
@@ -434,6 +451,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         return True
 
     def export_data(self: dict) -> None:
+        """Export curves and extremums in files.
+        Returns - None.
+        """
 
         value = self.dict_bandwidth_data[self.bandwidths[0]]
         rows = value[self.list_times[0]]
@@ -461,6 +481,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
                     self.dict_extremums_data['max'][bandwidth].items(),
                     self.dict_extremums_data['min'][bandwidth].items()
                             ):
+                    if key_max != key_min:
+                        print('key_max: ', key_max)
+                        print('key_min: ', key_min)
                     dict_extremums_export.update({
                         key_max: (row_max, row_min)})
 
@@ -474,6 +497,9 @@ class MainWindow(QMainWindow, ui.Ui_MainWindow):
         self.listWidget.setHidden(0)
 
     def close_button_pressed(self: dict) -> None:
+        """Handler event pressed close button.
+        Returns: None.
+        """
         if self.dict_bandwidth_data:
             self.save_button_pressed()
         QApplication.quit()
