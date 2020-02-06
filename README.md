@@ -21,7 +21,7 @@ Extremums can be exported in text file with tab splitted columns.
 
 ## Instalation.
 
-pip install eeg_filters
+pip install eeg-filters
 
 ## Usage
 
