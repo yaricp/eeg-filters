@@ -1,6 +1,6 @@
 # eeg-filters
 
-Package help you to filter and Analize EEG signals.
+Package help you to filter and analize EEG signals.
 Filter based on Chebyshev filter from scipy.signals
 
 You can take data from files exported from NeuroExplorer Vesion 4.4 in ASCII format.
@@ -15,9 +15,9 @@ Extremums can be exported in text file with tab splitted columns.
 
 ## Requirements
 
-numpy
-scipy
-matplotlib
+* numpy
+* scipy
+* matplotlib
 
 ## Instalation.
 
