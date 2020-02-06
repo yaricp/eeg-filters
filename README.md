@@ -1,17 +1,17 @@
 # eeg-filters
 
-Package help you to filter and analize EEG signals.
+Package helps you to filter and analyze EEG signals.
 Filter based on Chebyshev filter from scipy.signals
 
 You can take data from files exported from NeuroExplorer Vesion 4.4 in ASCII format.
-You can make filter in some bandwidth like [1, 220].
-It are borders of frequencies in Hz.
+You can make a filter in some bandwidth like [1, 220].
+These are the boundaries of frequencies in Hz.
 
-Also you can find maximums in some region and minimums in another region.
+Also you can find maximums in one region and minimums in another region.
 
 Finally you can export data to files.
-Data of curves export to like NeuroExplorer format.
-Extremums can be exported in text file with tab splitted columns.
+Curve data can be exported to the ascii format like NeuroExplorer file.
+Extremums can be exported to a text file with tab splitted columns.
 
 ## Requirements
 
@@ -39,8 +39,8 @@ $python3
 
 >>> show_plot(list_times,list_ticks,list_out,[1, 200],sample_rate,max_region=[0.08,0.104],min_region=[0.105,0.14])
 ```
-In this example we made filter in bandwidth = [1, 200].
-And in last line we make show_plot with extremums.
+In this example we made a filter in bandwidth = [1, 200].
+And in the last line we make show_plot with extremums.
 
 You can use it in scripts like this:
 
@@ -101,4 +101,4 @@ for bandwidth in bandwidths:
 ```
 Also you can use any UI for this package.
 For example you can see this project:
-https://github.com/yaricp/qt5-eeg-filters
+* https://github.com/yaricp/qt5-eeg-filters
