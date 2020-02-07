@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="eeg_filters", # Replace with your own username
-    version="0.0.3",
+    version="0.0.4",
     author="Yaric Pisarev",
     author_email="yaricp@gmail.com",
-    description="Package for to filter EEG signals",
+    description="Package for filtering EEG signals",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yaricp/eeg-filters",

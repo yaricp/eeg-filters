@@ -10,7 +10,7 @@ These are the boundaries of frequencies in Hz.
 Also you can find maximums in one region and minimums in another region.
 
 Finally you can export data to files.
-Curve data can be exported to the ascii format like NeuroExplorer file.
+Curve data can be exported to the ASCII format like NeuroExplorer file.
 Extremums can be exported to a text file with tab splitted columns.
 
 ## Requirements
@@ -19,7 +19,7 @@ Extremums can be exported to a text file with tab splitted columns.
 * scipy
 * matplotlib
 
-## Instalation.
+## Installation.
 
 pip install eeg-filters
 
