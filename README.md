@@ -1,16 +1,16 @@
 # eeg-filters
 
-Package helps you to filter and analyze EEG signals.
+Package helps you to filter and analyze EEG signals and EP (evoked potentials).
 Filter based on Chebyshev filter from scipy.signals
 
 You can take data from files exported from NeuroExplorer Vesion 4.4 in ASCII format.
-You can make a filter in some bandwidth like [1, 220].
-These are the boundaries of frequencies in Hz.
+You can make a bandpass filter in some bandwidth like [1, 220].
+These the lower and upper frequency boundaries in Hz.
 
-Also you can find maximums in one region and minimums in another region.
+Also you can find maximums in one time interval and minimums in another time interval.
 
 Finally you can export data to files.
-Curve data can be exported to the ASCII format like NeuroExplorer file.
+Filtered data could be exported to the ASCII file in the same (NeuroExplorer 4.4) format as the source file.
 Extremums can be exported to a text file with tab splitted columns.
 
 ## Requirements
