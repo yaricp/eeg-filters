@@ -1,11 +1,12 @@
 import setuptools
+from version import VERSION
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="eeg_filters", # Replace with your own username
-    version="0.0.5",
+    version=VERSION,
     author="Yaric Pisarev",
     author_email="yaricp@gmail.com",
     description="Package for filtering EEG signals and EP (evoked potentials).",
