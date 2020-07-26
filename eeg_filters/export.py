@@ -25,7 +25,6 @@ def __create_head_output_file(
 
 
 def export_curves(
-
                     source_filepath: str,
                     target_dirpath: str,
                     bandwidth: str,
@@ -33,9 +32,11 @@ def export_curves(
                     count_rows: int = None,
                     ) -> bool:
     """Write data to putput. Returns: True if export ok."""
+    print(source_filepath)
+    file_name = source_filepath.split('/')[-1].split('.')[0]
     target_filepath = os.path.join(
             target_dirpath,
-            'filter%s.dat' % bandwidth
+            '%s-Filter-%s.dat' % (file_name, bandwidth)
             )
     if os.path.exists(target_filepath):
         os.remove(target_filepath)
@@ -60,9 +61,11 @@ def export_curves(
 
 
 def export_extremums(
+                    source_filepath: str,
                     target_dirpath: str,
                     bandwidth: str,
-                    dict_extremums: dict = None
+                    dict_extremums: dict = None,
+                    times_ranges: tuple = None
                     ) -> bool:
     """
     Function exports extremums of curves,
@@ -71,13 +74,17 @@ def export_extremums(
     Returns: True if export ok.
 
     """
+    print(source_filepath)
+    file_name = source_filepath.split('.')[0]
     target_filepath = os.path.join(
             target_dirpath,
-            'extremums%s.dat' % bandwidth
+            '%s-Extremums-%s.dat' % ( file_name, bandwidth)
             )
     if os.path.exists(target_filepath):
         os.remove(target_filepath)
     with open(target_filepath, 'a') as outfile:
+        outfile.write('MaxSearchRange: %s - %s \n' % (times_ranges[0][0], times_ranges[0][1]))
+        outfile.write('MinSearchRange: %s - %s \n' % (times_ranges[1][0], times_ranges[1][1]))
         outfile.write('timestamp\tmaxtime\tmaxval\tmintime\tminval')
         outfile.write('\n')
         for key, row in dict_extremums.items():
