@@ -73,7 +73,7 @@ def export_extremums(
     Returns: True if export ok.
 
     """
-    file_name = source_filepath.split('.')[0]
+    file_name = source_filepath.split('/')[-1].split('.')[0]
     target_filepath = os.path.join(
             target_dirpath,
             '%s-Extremums-%s.dat' % ( file_name, bandwidth)

@@ -1,8 +1,10 @@
 import setuptools
 from version import VERSION
 
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
+
 
 setuptools.setup(
     name="eeg_filters", # Replace with your own username
