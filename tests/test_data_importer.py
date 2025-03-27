@@ -12,9 +12,9 @@ class TestDataImporter:
         assert self.data_importer.data["list_times"][0] == "13:34:40"
         assert self.data_importer.data["list_times"][-1] == "16:45:52"
         assert len(self.data_importer.data["list_ticks"]) == 800
-        assert len(self.data_importer.data["list_data"]) == 35
-        assert len(self.data_importer.data["list_data"][0]) == 800
-        assert len(self.data_importer.data["list_data"][-1]) == 800
+        assert len(self.data_importer.data["list_curves"]) == 35
+        assert len(self.data_importer.data["list_curves"][0]) == 800
+        assert len(self.data_importer.data["list_curves"][-1]) == 800
 
     def test_get_list_times_nex_file(self):
         row = "    13:34:40    13:45:10    13:49:14    13:58:54    "

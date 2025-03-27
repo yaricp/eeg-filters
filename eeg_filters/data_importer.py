@@ -30,7 +30,7 @@ class DataImporter:
             "sample_rate": 5000,
             "list_times": [],
             "list_ticks": [],
-            "list_out": []
+            "list_curves": []
         }
         if self.type == "nex" or self.type == "nex5":
             self.unwrap_nex_file()
@@ -41,7 +41,7 @@ class DataImporter:
             0, time_measuring, self.count_measure, endpoint=False
         )
         list_data = np.array(self.target_list).transpose()
-        self.data["list_data"] = list_data
+        self.data["list_curves"] = list_data
 
     def __get_type_data(self) -> None:
         """

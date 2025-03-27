@@ -16,11 +16,8 @@ import matplotlib.pyplot as plt
 
 
 def show_plot(
-    list_times: list,
-    list_ticks: list,
-    list_data: list,
+    incoming_data: dict,
     bandwidth: list,
-    fs: int,
     order: int = 3,
     rp: int = 2,
     iterator: float = 0.004,
@@ -28,10 +25,13 @@ def show_plot(
     min_region: list | None = None
 ) -> None:
     """ Function shows plot of data. """
-
+    list_times = incoming_data["list_times"]
+    list_ticks = incoming_data["list_ticks"]
+    list_curves = incoming_data["list_curves"]
+    fs = incoming_data["sample_rate"]
     iter_value: float = 0.0
-    for time_stamp, dataset in zip(list_times, list_data):
-        data = make_filter(
+    for time_stamp, dataset in zip(list_times, list_curves):
+        data = apply_filter(
             dataset, bandwidth, fs, order, rp
         )
         iter_value -= iterator
@@ -65,7 +65,7 @@ def show_plot(
         raise Exception(e)
 
 
-def make_filter(
+def apply_filter(
     dataset: list, bandwidth: list, fs: int, order: int, rp: int
 ) -> list:
     """
