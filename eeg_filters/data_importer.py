@@ -12,7 +12,7 @@ Input file can be only format -.
 """
 
 import numpy as np
-from pyedflib import highlevel
+# from pyedflib import highlevel
 
 
 class DataImporter:
