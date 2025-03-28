@@ -564,6 +564,19 @@ files = [
 ]
 
 [[package]]
+name = "pyedflib"
+version = "0.1.40"
+description = "library to read/write EDF+/BDF+ files"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pyedflib-0.1.40.tar.gz", hash = "sha256:07136a33fc6c166e6b68a8d95ac77d2cb14aedf971d077a73d95a796975cc12b"},
+]
+
+[package.dependencies]
+numpy = ">=1.9.1"
+
+[[package]]
 name = "pyflakes"
 version = "3.2.0"
 description = "passive checker of Python programs"
@@ -740,4 +753,4 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "160ee625b11b21263de449313669209271a04de9862d068724a41073a2a5d883"
+content-hash = "0d45a3766f277806dda70e18ecd001a61a5b3b3a95a2a8c46bd36a8fcc928dfe"

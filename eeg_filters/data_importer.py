@@ -12,6 +12,7 @@ Input file can be only format -.
 """
 
 import numpy as np
+from pyedflib import highlevel
 
 
 class DataImporter:
@@ -130,6 +131,9 @@ class DataImporter:
         """
         Unwraps edf file and put data to self.data dictionary
         """
+
+        # signals, signal_headers, header = highlevel.read_edf(self.filepath)
+        # channels = [i["label"] for i in signal_headers]
         sample_rate = 5000
         list_times: list[str] = []
         list_ticks: list[int] = []
