@@ -3,24 +3,24 @@ from eeg_filters import DataImporter
 
 class TestDataImporter:
 
-    data_importer = DataImporter("tests/data/sample_data.nex")
+    data_importer = DataImporter("tests/data/example2.nex")
 
     def test_init(self):
         assert self.data_importer.type == "nex"
         assert self.data_importer.data["sample_rate"] == 10000.0
-        assert len(self.data_importer.data["list_times"]) == 35
-        assert self.data_importer.data["list_times"][0] == "13:34:40"
-        assert self.data_importer.data["list_times"][-1] == "16:45:52"
-        assert len(self.data_importer.data["list_ticks"]) == 800
+        assert len(self.data_importer.data["list_name_curves"]) == 35
+        assert self.data_importer.data["list_name_curves"][0] == "13:34:40"
+        assert self.data_importer.data["list_name_curves"][-1] == "16:45:52"
+        assert len(self.data_importer.data["list_tick_times"]) == 800
         assert len(self.data_importer.data["list_curves"]) == 35
         assert len(self.data_importer.data["list_curves"][0]) == 800
         assert len(self.data_importer.data["list_curves"][-1]) == 800
 
     def test_get_list_times_nex_file(self):
         row = "    13:34:40    13:45:10    13:49:14    13:58:54    "
-        self.data_importer.get_list_times_nex_file(row)
-        assert len(self.data_importer.data["list_times"]) == 4
-        assert self.data_importer.data["list_times"] == [
+        self.data_importer.get_list_name_curves_nex_file(row)
+        assert len(self.data_importer.data["list_name_curves"]) == 4
+        assert self.data_importer.data["list_name_curves"] == [
             "13:34:40", "13:45:10", "13:49:14", "13:58:54"
         ]
 
@@ -50,7 +50,7 @@ class TestDataImporter:
 
 class TestDataImporterTxt:
 
-    data_importer = DataImporter("tests/data/sample_data.txt")
+    data_importer = DataImporter("tests/data/example3_nex.txt")
 
     def test__get_type_data(self):
         self.data_importer._DataImporter__get_type_data()
@@ -59,17 +59,17 @@ class TestDataImporterTxt:
 
 class TestDataImporterEDF:
 
-    data_importer = DataImporter("tests/data/sample_data.edf")
+    data_importer = DataImporter("tests/data/example1.edf")
 
     def test__get_type_data(self):
         self.data_importer._DataImporter__get_type_data()
         assert self.data_importer.type == "edf"
 
 
-class TestDataImporterTextEDF:
+# class TestDataImporterTextEDF:
 
-    data_importer = DataImporter("tests/data/sample_data_edf.txt")
+#     data_importer = DataImporter("tests/data/example4_edf.txt")
 
-    def test__get_type_data(self):
-        self.data_importer._DataImporter__get_type_data()
-        assert self.data_importer.type == "edf"
+#     def test__get_type_data(self):
+#         self.data_importer._DataImporter__get_type_data()
+#         assert self.data_importer.type == "edf"

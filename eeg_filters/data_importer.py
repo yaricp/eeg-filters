@@ -12,7 +12,7 @@ Input file can be only format -.
 """
 
 import numpy as np
-# from pyedflib import highlevel
+from pyedflib import highlevel
 
 
 class DataImporter:
@@ -20,7 +20,6 @@ class DataImporter:
     Class for import data from edf and nex formats
     to data structure to have possibility to filter it.
     """
-
     def __init__(self, filepath: str):
         self.filepath: str = filepath
         self.type: str = ""
@@ -29,8 +28,8 @@ class DataImporter:
         self.__get_type_data()
         self.data: dict = {
             "sample_rate": 5000,
-            "list_times": [],
-            "list_ticks": [],
+            "list_name_curves": [],
+            "list_tick_times": [],
             "list_curves": []
         }
         if self.type == "nex" or self.type == "nex5":
@@ -38,7 +37,7 @@ class DataImporter:
         elif self.type == "edf":
             self.unwrap_edf_file()
         time_measuring = self.count_measure/self.data["sample_rate"]
-        self.data["list_ticks"] = np.linspace(
+        self.data["list_tick_times"] = np.linspace(
             0, time_measuring, self.count_measure, endpoint=False
         )
         list_data = np.array(self.target_list).transpose()
@@ -57,9 +56,6 @@ class DataImporter:
                 data_file: str = file.read()
                 if data_file.find("NeuroExplorer") != -1:
                     self.type = "nex"
-                    return
-                elif data_file.find("EDF") != -1:
-                    self.type = "edf"
                     return
 
     def unwrap_nex_file(self) -> None:
@@ -80,7 +76,7 @@ class DataImporter:
                     )
                     continue
                 elif row.find("Measure times:") != -1:
-                    position = "times"
+                    position = "name_curves"
                     tmp_count = 0
                     continue
                 elif row.find("Data:") != -1:
@@ -92,14 +88,14 @@ class DataImporter:
                 elif tmp_count == 0:
                     tmp_count += 1
                     continue
-                if position == "times":
-                    self.get_list_times_nex_file(row)
+                if position == "name_curves":
+                    self.get_list_name_curves_nex_file(row)
                     tmp_count = 0
                 else:
                     self.append_data_nex_file(row)
                     self.count_measure += 1
 
-    def get_list_times_nex_file(self, row: str) -> None:
+    def get_list_name_curves_nex_file(self, row: str) -> None:
         """
         Gets list of times from nex file
         """
@@ -111,7 +107,7 @@ class DataImporter:
                     1, len(splitted_row) - 1
                 )
             ]
-        self.data["list_times"] = list_times
+        self.data["list_name_curves"] = list_times
 
     def append_data_nex_file(self, row: str) -> None:
         """
@@ -131,14 +127,10 @@ class DataImporter:
         """
         Unwraps edf file and put data to self.data dictionary
         """
-
-        # signals, signal_headers, header = highlevel.read_edf(self.filepath)
-        # channels = [i["label"] for i in signal_headers]
-        sample_rate = 5000
-        list_times: list[str] = []
-        list_ticks: list[int] = []
-        list_data: list[list[float]] = []
+        signals, signal_headers, header = highlevel.read_edf(self.filepath)
+        channels = [i["label"] for i in signal_headers]
+        sample_rate = signal_headers[0]["sample_frequency"]
         self.data["sample_rate"] = sample_rate
-        self.data["list_times"] = list_times
-        self.data["list_ticks"] = list_ticks
-        self.data["list_data"] = list_data
+        self.data["list_name_curves"] = channels
+        self.data["list_data"] = signals
+        self.count_measure = len(signals[0])

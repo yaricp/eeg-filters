@@ -6,7 +6,7 @@ from eeg_filters.filters import (
 
 
 def test_apply_filter():
-    data_importer = DataImporter("tests/data/sample_data.nex")
+    data_importer = DataImporter("tests/data/example2.nex")
     incoming_data = data_importer.data
     list_curves = incoming_data["list_curves"]
     fs = incoming_data["sample_rate"]
