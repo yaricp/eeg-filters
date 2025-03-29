@@ -44,9 +44,8 @@ class DataImporter:
         if self.type == "nex":
             list_data = np.array(self.target_list).transpose()
             self.data["list_curves"] = list_data
-        logger.info(f"self.data['list_curves']: {self.data['list_curves']}")
         logger.info(
-            f"type(self.data['list_curves']): {type(self.data['list_curves'])}"
+            f"imported : {len(self.data['list_curves'])} curves"
         )
 
     def __get_type_data(self) -> None:
