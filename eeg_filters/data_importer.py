@@ -13,6 +13,7 @@ Input file can be only format -.
 
 import numpy as np
 from pyedflib import highlevel
+from loguru import logger
 
 
 class DataImporter:
@@ -40,8 +41,13 @@ class DataImporter:
         self.data["list_tick_times"] = np.linspace(
             0, time_measuring, self.count_measure, endpoint=False
         )
-        list_data = np.array(self.target_list).transpose()
-        self.data["list_curves"] = list_data
+        if self.type == "nex":
+            list_data = np.array(self.target_list).transpose()
+            self.data["list_curves"] = list_data
+        logger.info(f"self.data['list_curves']: {self.data['list_curves']}")
+        logger.info(
+            f"type(self.data['list_curves']): {type(self.data['list_curves'])}"
+        )
 
     def __get_type_data(self) -> None:
         """
@@ -89,13 +95,13 @@ class DataImporter:
                     tmp_count += 1
                     continue
                 if position == "name_curves":
-                    self.get_list_name_curves_nex_file(row)
+                    self.get_list_name_curves_from_nex_file(row)
                     tmp_count = 0
                 else:
-                    self.append_data_nex_file(row)
+                    self.append_data_from_nex_file(row)
                     self.count_measure += 1
 
-    def get_list_name_curves_nex_file(self, row: str) -> None:
+    def get_list_name_curves_from_nex_file(self, row: str) -> None:
         """
         Gets list of times from nex file
         """
@@ -109,7 +115,7 @@ class DataImporter:
             ]
         self.data["list_name_curves"] = list_times
 
-    def append_data_nex_file(self, row: str) -> None:
+    def append_data_from_nex_file(self, row: str) -> None:
         """
         Append data from row of source file to list of data.
         """
@@ -132,5 +138,7 @@ class DataImporter:
         sample_rate = signal_headers[0]["sample_frequency"]
         self.data["sample_rate"] = sample_rate
         self.data["list_name_curves"] = channels
-        self.data["list_data"] = signals
+        self.data["list_curves"] = signals
+        # for row in signals:
+        #     self.target_list.append(row)
         self.count_measure = len(signals[0])
