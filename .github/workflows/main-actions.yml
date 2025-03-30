@@ -35,5 +35,5 @@ jobs:
         with:
           pypi_token: ${{ secrets.PYPI_TOKEN }}
           repository_name: "eeg-filters"
-          repository_url: "https://pypi.org/legacy/"
+          repository_url: "https://pypi.org/project/eeg-filters"
 
