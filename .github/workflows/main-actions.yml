@@ -16,8 +16,8 @@ jobs:
         run: bash -c ./scripts/./install.sh;
       - name: run linters
         run: |
-          .venv/bin/poetry run flake8 eeg_filters/
-          .venv/bin/poetry run ruff eeg_filters/
+          .venv/bin/poetry run flake8 eeg_filters
+          .venv/bin/poetry run ruff check eeg_filters
       - name: run unittests
         run: .venv/bin/poetry run pytest
 
