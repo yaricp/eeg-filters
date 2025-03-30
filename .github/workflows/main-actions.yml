@@ -24,6 +24,7 @@ jobs:
   build_public_package:
     needs: run-linters-unittests
     runs-on: ubuntu-latest
+    environment: main
     permissions:
       contents: read
       packages: write
