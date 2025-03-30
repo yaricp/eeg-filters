@@ -54,18 +54,20 @@ from eeg_filters.export import export_curves, export_extremums
 
 source_file_name = input('input path for source file, please: ')
 bandwidths = [[1, 100],[5, 100],[10, 100],[1, 200], [5, 200],[10, 200]]
-max_region = [0.08, 0.1]
-min_region = [0.103, 0.12]
+max_region = [0.01, 0.02]
+min_region = [0.04, 0.06]
 incoming_data = DataImporter(source_file_name).data
-list_times = incoming_data["list_times"]
+list_name_curves = incoming_data["list_name_curves"]
 list_curves = incoming_data["list_curves"]
+list_tick_times = incoming_data["list_tick_times"]
+sample_rate = incoming_data["sample_rate"]
 
 dict_filtered_data = {}
 
 for bandwidth in bandwidths:
     dict_data = {}
     dict_extremums = {}
-    for timestamp, curve in zip(list_times, list_curves):
+    for timestamp, curve in zip(list_name_curves, list_curves):
         filtered_data = apply_filter(
             curve, bandwidth, sample_rate, order=3, rp=2
         )
@@ -73,10 +75,10 @@ for bandwidth in bandwidths:
         dict_extremums.update(
             {timestamp:(
                 search_max_min(
-                    list_ticks, filtered_data, max_region,'max'
+                    list_tick_times, filtered_data, max_region,'max'
                 ), 
                 search_max_min(
-                    list_ticks, filtered_data, min_region,'min'
+                    list_tick_times, filtered_data, min_region,'min'
                 )
             )}
         )
