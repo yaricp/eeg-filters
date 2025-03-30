@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eeg-filters"
-version = "0.0.8"
+version = "0.0.9"
 description = "Package for filtering EEG signals and EP (evoked potentials)."
 authors = ["Iaroslav Pisarev"]
 license = "MIT License"

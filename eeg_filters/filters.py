@@ -22,11 +22,12 @@ def show_plot(
     rp: int = 2,
     iterator: float = 0.004,
     max_region: list | None = None,
-    min_region: list | None = None
-) -> None:
+    min_region: list | None = None,
+    testmode: bool = False
+) -> tuple | None:
     """ Function shows plot of data. """
-    list_times = incoming_data["list_times"]
-    list_ticks = incoming_data["list_ticks"]
+    list_times = incoming_data["list_name_curves"]
+    list_ticks = incoming_data["list_tick_times"]
     list_curves = incoming_data["list_curves"]
     fs = incoming_data["sample_rate"]
     iter_value: float = 0.0
@@ -58,11 +59,15 @@ def show_plot(
     plt.xlabel("bandwidth: %s" % bandwidth)
     plt.grid()
     name = "filtered%s" % bandwidth
-    plt.savefig("{}.{}".format(name, "png"), fmt="png")
+    filename = f"{name}.png"
+    plt.savefig(filename)
+    if testmode:
+        return plt, filename
     try:
         plt.show()
     except Exception as e:
         raise Exception(e)
+    return None
 
 
 def apply_filter(
@@ -95,7 +100,7 @@ def apply_filter(
 
 
 def search_max_min(
-    list_ticks: list, signal_data: list, where_find: list,
+    list_tick_times: list, signal_data: list, where_find: list,
     what_find: str
 ) -> tuple:
     """
@@ -103,7 +108,7 @@ def search_max_min(
 
     Also it searches time of maximum and minimum.
     input:
-        list_ticks - list of time of measured value in EEG signal;
+        list_tick_times - list of time of measured value in EEG signal;
         signal_data - list of values of EEG signal;
         where_find - list of border of times for search extremums;
         what_find - "max" or min;
@@ -111,8 +116,8 @@ def search_max_min(
 
     """
 
-    begin_index = get_index_time(list_ticks, where_find[0])
-    end_index = get_index_time(list_ticks, where_find[1])
+    begin_index = get_index_time(list_tick_times, where_find[0])
+    end_index = get_index_time(list_tick_times, where_find[1])
     search_slice = signal_data[begin_index:end_index]
     if what_find == "max":
         extremum_value = np.amax(search_slice)
@@ -120,15 +125,15 @@ def search_max_min(
     else:
         extremum_value = np.amin(search_slice)
         extremum_index = np.where(search_slice == np.amin(search_slice))[0][0]
-    return list_ticks[begin_index + extremum_index], extremum_value
+    return list_tick_times[begin_index + extremum_index], extremum_value
 
 
-def get_index_time(list_ticks: list, time: float) -> int:
+def get_index_time(list_tick_times: list[float], time: float) -> int:
     """
     Get index in time ticks list by float value of seconds.
 
     Returns: integer value of index.
 
     """
-    ticks_array = np.array(list_ticks)
+    ticks_array = np.array(list_tick_times)
     return np.where(ticks_array >= time)[0][0]
