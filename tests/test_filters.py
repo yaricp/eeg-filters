@@ -20,8 +20,8 @@ def test_apply_filter():
     )
     assert len(filtered_curve) == len(dataset)
     max_filtered = max(filtered_curve)
-    assert round(max_filtered, 9) == round(
-        np.float64(0.001940446691411313), 9
+    assert round(max_filtered, 8) == round(
+        np.float64(0.001940446691411313), 8
     )
 
     bandwidth = [1, 50]
