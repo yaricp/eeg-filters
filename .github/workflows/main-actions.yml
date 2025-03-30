@@ -2,7 +2,7 @@ name: Run check format lint and unittests
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   run-linters-unittests:
